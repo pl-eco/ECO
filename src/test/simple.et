@@ -1,0 +1,16 @@
+
+modes {
+	high <: full;
+	low <: high;
+}
+
+class B {
+	
+}
+
+class A {
+	public mcase<int> a;// = mcase<B> {low: new B(); high: new B()};
+	public void a() {
+		int x = high |> a;
+	}
+}

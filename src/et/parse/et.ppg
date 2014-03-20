@@ -1,0 +1,422 @@
+// Assumes polyglot.jar is in classpath
+include "polyglot/ext/jl5/parse/jl5.ppg"
+
+package et.parse;
+
+import polyglot.util.*;
+import polyglot.parse.VarDeclarator;
+import polyglot.ast.*;
+import polyglot.types.*;
+import polyglot.lex.*;
+
+import polyglot.ext.jl5.parse.FlagAnnotations;
+import polyglot.ext.jl5.parse.JL5Name;
+
+import et.types.etTypeSystem;
+import et.ast.etNodeFactory;
+import polyglot.parse.Name;
+
+import et.ast.*;
+import et.types.*;
+import et.util.Names;
+import et.linersolve.ETValueHolder;
+
+import java.util.*;
+
+parser Grm extends polyglot.ext.jl5.parse.Grm {:
+    public final etTypeSystem ts;
+    public final etNodeFactory nf;
+
+    public Grm(Lexer l, TypeSystem t, NodeFactory n, ErrorQueue q) {
+        super(l, t, n, q);
+        ts = (etTypeSystem) t;
+        nf = (etNodeFactory) n;
+    }     
+:};
+
+terminal Token MODES; //MODE refers to mode
+terminal Token PHASES;
+terminal Token PARORD;
+terminal Token LTP;
+terminal Token ATMODE;
+terminal Token ATPHASE;
+terminal Token ADAPT;
+terminal et.parse.ModeLiteral MODE_LITERAL;
+terminal Token MODEVT;
+terminal Token MSWITCH;
+terminal Token NOSCALE;
+terminal Token PHASESUPER;
+
+/* dynamic related syntax */
+terminal Token ATTRIBUTE;
+terminal Token ATTRIBUTER;
+terminal Token RECONSTRUCT;
+terminal Token RECONSTRUCTOR;
+terminal Token AS;
+terminal Token MPATTERN;
+terminal Token MPAT_APP;
+terminal Token SUSTAINABLE;
+terminal Token UNIFORM;
+terminal Token BSUPPLY;
+terminal Token DEMAND;
+terminal Token ARROW;
+
+non terminal EnergyFlags at_opt, energies, energy;
+non terminal Adapt_c adapt_expression;
+non terminal CanonicalTypeNode mode_type;
+non terminal List modes_declarations_opt;
+non terminal List mode_body_declarations;
+non terminal List mode_body_declaration;
+non terminal List phases_declarations_opt;
+non terminal List phase_body_declarations;
+non terminal List phase_body_declaration;
+
+/* DYNAMIC RELATED SYNTAX */
+non terminal String dynamic_name;
+non terminal MPatternElement mpattern_element;
+non terminal List mpattern_elements;
+non terminal MPattern_Init_c mpattern_init;
+non terminal MPatternApp mpattern_application;
+non terminal Reconstruct_c reconstruct_expression;
+non terminal Attribute_c attribute_expression;
+
+/* eco syntax */
+non terminal Stmt sustainable_statement;
+non terminal BSupply bsupply_clause;
+non terminal Demand demand_clause;
+non terminal UniformStmt uniform_statement;
+
+start with goal;
+
+
+// Energy type syntax
+at_opt::=
+       {: RESULT = EnergyFlags.createDefault(); :}
+    | 
+		energies:a
+            {: RESULT = a; :}
+    ;
+			
+energies ::=
+        energy:a 
+            {: RESULT = a; :}
+    |   energies:a energy:b
+			{: if (a.intersects(b)) parser.die(parser.position());
+               RESULT = a.set(b); :}
+    ;
+			   
+energy ::=
+        ATMODE LPAREN name:a RPAREN
+        {:  RESULT = EnergyFlags.createEType(ETTYPE.MODE, a.toString()); :}
+    |   
+        // @mode(?) or @mode(?m)	
+  		ATMODE LPAREN dynamic_name:a RPAREN
+		{:	RESULT = EnergyFlags.createEType(ETTYPE.MODE, a); :}
+	|   
+	    // @mode<CONSTANT>
+	    ATMODE LT IDENTIFIER:a GT
+		{:  RESULT = EnergyFlags.createEType(ETTYPE.MODE, a.getIdentifier()); :}
+	|	ATPHASE LPAREN name:a RPAREN
+            {: 
+            RESULT = EnergyFlags.createEType(ETTYPE.PHASE, a.toString()); :} 
+    |	ATPHASE LPAREN PHASESUPER:a RPAREN
+            {: 
+            RESULT = EnergyFlags.createEType(ETTYPE.PHASE, "_super"); :}
+	|	ATPHASE LPAREN QUESTION RPAREN
+		{:
+		RESULT = EnergyFlags.createEType(ETTYPE.PHASE, EnergyFlags.ANONYMOUS); :}
+	;
+	
+dynamic_name ::=
+       //question mark
+       	QUESTION
+       		{:  RESULT = EnergyFlags.ANONYMOUS; :}
+      | QUESTION IDENTIFIER:a
+      		{:  RESULT = a.getIdentifier(); :}
+      		;
+ 
+ override simple_name ::=
+                    // Name
+        IDENTIFIER:a at_opt:b
+            {: 
+            	Position pos = parser.pos(a);
+            	
+            	/*
+				 * record the ET type values
+				 */
+				ETValueHolder vh = parser.ts.getValueHolder();
+				//vh.bindPosToModifiers(pos, b.getFlags()); --Chaoren
+            
+            	RESULT = new JL5Name(parser.nf, parser.ts, parser.pos(a), parser.nf.Id(parser.pos(a), a.getIdentifier())); :}
+    ;
+    
+override qualified_name ::=
+                    // Name
+        name:a DOT IDENTIFIER:b at_opt:c
+            {: 
+            	Position pos = parser.pos(a, b);
+            	
+            	/*
+				 * record the ET type values
+				 */
+				ETValueHolder vh = parser.ts.getValueHolder();
+				//vh.bindPosToModifiers(pos, c.getFlags()); --Chaoren
+            
+            	RESULT = new JL5Name(parser.nf, parser.ts, pos, a, parser.nf.Id(parser.pos(b), b.getIdentifier())); :}
+    ;
+
+/*
+ * The reason to override this syntax is to record position info for value mappint
+ */ 
+override class_instance_creation_expression ::=
+		NEW:a class_or_interface_type:b LPAREN:c argument_list_opt:d RPAREN:e class_body_opt:f
+        {: RESULT = parser.nf.New(parser.pos(a), b, d, f); :}
+	|	NEW:a type_arguments:b class_or_interface_type:c LPAREN:d argument_list_opt:e RPAREN:f class_body_opt:g
+	    // Instantiating type arguments    
+        {: RESULT = parser.nf.New(parser.pos(a), b, c, e, g); :}
+	|	primary:a DOT:b NEW:c type_arguments_opt:d IDENTIFIER:e at_opt:k type_arguments_opt:f LPAREN:g argument_list_opt:h RPAREN:i class_body_opt:j
+        // Instantiating type arguments    
+        {: 
+        	/*
+			 * record the ET type values
+			 */
+			ETValueHolder vh = parser.ts.getValueHolder();
+			//vh.bindPosToModifiers(parser.pos(e), k.getFlags()); --Chaoren
+        
+           TypeNode aa = (new JL5Name(parser.nf, parser.ts, parser.pos(e), parser.nf.Id(parser.pos(e), e.getIdentifier()))).toType();
+           TypeNode tn = parser.nf.AmbTypeInstantiation(parser.pos(e, f), aa, f); 
+           RESULT = parser.nf.New(parser.pos(a), a, d, tn, h, j); :}
+	|	name:a DOT:b NEW:c type_arguments_opt:d IDENTIFIER:e at_opt:k type_arguments_opt:f LPAREN:g argument_list_opt:h RPAREN:i class_body_opt:j
+	    // Instantiating type arguments    
+        {: 
+        	/*
+			 * record the ET type values
+			 */
+			ETValueHolder vh = parser.ts.getValueHolder();
+			//vh.bindPosToModifiers(parser.pos(e), k.getFlags()); --Chaoren
+        
+           TypeNode aa = (new JL5Name(parser.nf, parser.ts, parser.pos(e), parser.nf.Id(parser.pos(e), e.getIdentifier()))).toType();
+           TypeNode tn = parser.nf.AmbTypeInstantiation(parser.pos(e, f), aa, f);
+           RESULT = parser.nf.New(parser.pos(a), a.toExpr(), d, tn, h, j); :}
+;
+
+extend modifier ::=
+        NOSCALE:a
+            {: RESULT = ETFlags.NOSCALE; :}
+    ;
+    
+extend class_or_interface_type ::=
+                    // mpattern<type>
+        MPATTERN LT type:a  GT
+            {: RESULT = parser.nf.MPattern(parser.pos(a), a); :}
+    ;
+
+// mode VT
+extend type ::=
+                   // TypeNode 	
+	MODEVT:a
+            {: RESULT = parser.nf.CanonicalTypeNode(parser.pos(a), parser.ts.modeVT()); :}
+    ;  	
+    
+extend literal ::=
+      MODE_LITERAL:a
+            {: RESULT = parser.nf.ModeLit(parser.pos(a), a.getValue()); :}
+    ;
+
+extend statement_without_trailing_substatement ::=
+	    sustainable_statement:a
+	    {: RESULT = a; :}
+	|   uniform_statement:a
+		{: RESULT = a; :}
+	;
+
+sustainable_statement ::= SUSTAINABLE:n block:a bsupply_clause:b demand_clause:c
+            {: RESULT = parser.nf.Sustainable(parser.pos(n, c), a, b, c); :}
+	;
+
+uniform_statement ::= UNIFORM:n block:a
+			{: RESULT = parser.nf.Uniform(parser.pos(n, a), a); :}
+	;
+	
+bsupply_clause ::= 
+		BSUPPLY:n LPAREN expression:a RPAREN:c
+			{: RESULT = parser.nf.BSupply(parser.pos(n, c), a); :}
+	;
+	
+demand_clause ::=
+		DEMAND:n LPAREN expression:a RPAREN ARROW LPAREN expression:b RPAREN:c 
+			{: RESULT = parser.nf.Demand(parser.pos(n, c), a, b); :}
+	;
+
+extend method_header ::=
+                    // reconstruct
+    COMP:a RECONSTRUCTOR:b LPAREN RPAREN:d
+        {: 
+        	
+        RESULT = parser.nf.ReconstructDecl(parser.pos(a, d), 
+        				parser.nf.MPattern(parser.pos(a), parser.nf.CanonicalTypeNode(parser.pos(a), parser.ts.Object()) /*return type*/),
+        				new Id_c(parser.pos(a, b), Names.RECONSTRUCT_METHOD_NAME)); :}
+    |              // attribute 
+    COMP:a ATTRIBUTER:b LPAREN RPAREN:c
+        {: RESULT = parser.nf.AttributeDecl(parser.pos(a, c), parser.nf.CanonicalTypeNode(parser.pos(a), parser.ts.modeVT()) /*return type*/, new Id_c(parser.pos(a, b), Names.ATTRIBUTER_METHOD_NAME)); :} 
+       ;
+   
+//MPatternApp
+
+mpattern_application ::=
+	// (expression of type modeV) |> name of mpattern type or the patter itself
+	IDENTIFIER:a MPAT_APP unary_expression_not_plus_minus:b
+			{: RESULT = parser.nf.MPatternApp(parser.pos(a, b), a.getIdentifier(), b); :}
+	;
+	
+    
+//Pattern_Init_c
+mpattern_init ::= 
+MPATTERN LT type:a GT LBRACE mpattern_elements:b RBRACE
+           {:    RESULT = parser.nf.MPattern_Init(parser.pos(a, b), a, b); :}
+           ;
+
+//List
+mpattern_elements ::= 
+		mpattern_element:a
+			{:  List l = new LinkedList<MPatternElement>();
+				l.add(a);
+				RESULT = l;
+			:}
+	|	mpattern_elements:a SEMICOLON mpattern_element:b
+	        {: RESULT = a;
+	        	a.add(b); :}
+	;
+
+//MPatternElement
+mpattern_element ::=
+		  name:a COLON:b expression:c
+		  {:  RESULT = parser.nf.MPatternElement(parser.pos(a, c), a.toString(), c);	  	
+		   :}
+		  ;
+
+extend assignment_expression ::=
+     adapt_expression:a
+            {: RESULT = a; :}
+  |  reconstruct_expression:a
+ 		{: RESULT = a; :}
+  |  attribute_expression:a
+        {: RESULT = a; :}
+  |  mpattern_init:a
+  			{: RESULT = a; :}
+  |   mpattern_application:a
+  			{: RESULT = a;  :}
+    ;
+
+adapt_expression ::=
+                    // Adapt expression
+       ADAPT unary_expression_not_plus_minus:a 
+            {: RESULT = parser.nf.Adapt(parser.pos(a), null, a); :}
+		|	ADAPT:t LBRACK name:d RBRACK:b unary_expression_not_plus_minus:a 
+			{: RESULT = parser.nf.Adapt(parser.pos(t, a), d.toString(), a); :}
+	;
+
+reconstruct_expression ::=
+	   RECONSTRUCT unary_expression_not_plus_minus:a AS unary_expression_not_plus_minus:b
+	         {:  RESULT = parser.nf.Reconstruct(parser.pos(a, b), a, b); :}
+	        ;
+  
+attribute_expression ::=
+                    // attribute_expression
+      ATTRIBUTE unary_expression_not_plus_minus:a
+            {: RESULT = parser.nf.Attribute(parser.pos(a), a); :}
+            ;
+
+// Class level energy type declare
+override class_declaration ::=
+		// record mode and phase value	
+                    // ClassDecl
+         modifiers_or_annotations_opt:a CLASS:n IDENTIFIER:b at_opt: g type_parameters_opt:c
+                super_opt:d interfaces_opt:e class_body:f
+            {: RESULT = parser.nf.ClassDecl(parser.pos(n, e),
+                a.flags(), a.annotations(), parser.nf.Id(parser.pos(b), b.getIdentifier()), d, e, f, c, g); :}
+  
+         ;
+	
+override interface_declaration ::=
+		modifiers_or_annotations_opt:a INTERFACE:b IDENTIFIER:c at_opt: g type_parameters_opt:d extends_interfaces_opt:e interface_body:f
+        {: RESULT = parser.nf.ClassDecl(parser.pos(b, f), a.setFlag(Flags.INTERFACE).flags(), a.annotations(), parser.nf.Id(parser.pos(c), c.getIdentifier()), null, e, f, d, g); :}
+    | AT:a INTERFACE:b IDENTIFIER:c at_opt: g annotation_body:d
+        {: List superints = new LinkedList<TypeNode>();
+           superints.add(parser.nf.CanonicalTypeNode(parser.pos(b, d), parser.ts.Annotation()));
+           RESULT = parser.nf.ClassDecl(parser.pos(a, d), Flags.INTERFACE.set(JL5Flags.ANNOTATION), null, parser.nf.Id(parser.pos(c), c.getIdentifier()), null, superints, d, null, g); :}
+    | modifiers_or_annotations:a AT:b INTERFACE:c at_opt: g IDENTIFIER:d annotation_body:e
+        {: List superints = new LinkedList<TypeNode>();
+           superints.add(parser.nf.CanonicalTypeNode(parser.pos(b, e), parser.ts.Annotation()));
+           RESULT = parser.nf.ClassDecl(parser.pos(a, d), a.setFlag(Flags.INTERFACE.set(JL5Flags.ANNOTATION)).flags(), a.annotations(), parser.nf.Id(parser.pos(d), d.getIdentifier()), null, superints, e, null, g); :}
+	;
+// Mode and Phase declare
+
+extend type_declaration ::=
+                    // ClassDecl
+	 MODES LBRACE:n modes_declarations_opt:a RBRACE:b 
+            {: ModesDecl decl = new ModesDecl(parser.pos(n, b), Flags.NONE, parser.nf.Id(parser.pos(n), "modes"),
+            								 null, new LinkedList(), 
+            								 parser.nf.ClassBody(parser.pos(n, b), new LinkedList()));
+            	decl.setList(a);
+            	RESULT = decl;
+             :}
+    |  PHASES LBRACE:n phases_declarations_opt:a RBRACE:b 
+            {: PhasesDecl decl = new PhasesDecl(parser.pos(n, b), Flags.NONE, parser.nf.Id(parser.pos(n), "phases"),
+            								 null, new LinkedList(), 
+            								 parser.nf.ClassBody(parser.pos(n, b), new LinkedList()));
+            	decl.setList(a);
+            	RESULT = decl; :}     
+    ; 
+
+modes_declarations_opt ::= 
+	// List of Mode
+ 	{: RESULT = new ArrayList(); :}
+    |   mode_body_declarations:a
+            {: RESULT = a; :}
+    ;
+mode_body_declarations ::= 
+	mode_body_declaration:a
+		{: RESULT = a; :}
+	|  mode_body_declarations:a mode_body_declaration:b
+			 {: RESULT = a;
+			 	a.addAll(b);
+			  :}
+    ;
+ 
+mode_body_declaration ::=
+	 name:b SEMICOLON:c
+            {: List l = new ArrayList();   
+            	l.add(b.toString());
+             	RESULT = l; :}
+    |  name:b PARORD:c name:d SEMICOLON:e
+            {: List l = new ArrayList();
+            	l.add(b.toString() + "<:" + d.toString());
+                RESULT = l; :}
+    ;
+
+phases_declarations_opt ::= 
+	// List of Mode
+ 	{: RESULT = new ArrayList(); :}
+    |   phase_body_declarations:a
+            {: RESULT = a; :}
+    ;
+phase_body_declarations ::= 
+	phase_body_declaration:a
+		{: RESULT = a; :}
+	|  phase_body_declarations:a phase_body_declaration:b
+			 {: RESULT = a;
+			 	a.addAll(b);
+			  :}
+    ;
+ 
+phase_body_declaration ::=
+	name:b SEMICOLON:c
+            {: List l = new ArrayList();   
+            	l.add(b.toString());
+             	RESULT = l;  :}
+	|	name:b LTP:c name:d SEMICOLON:e
+            {: List l = new ArrayList();
+            	l.add(b.toString() + "<cpu" + d.toString());
+                RESULT = l; :}
+    ;

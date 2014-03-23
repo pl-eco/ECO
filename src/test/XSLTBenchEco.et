@@ -101,6 +101,8 @@ public class XSLTBenchEco {
 			_id = id;
 		}
 
+		double testvar = 0;
+		
 		public void run() {
 			try {
 				if (verbose)
@@ -125,7 +127,7 @@ public class XSLTBenchEco {
 						}
 						finished += quality;
 						// check battery status and make decision
-						todo = _workQueue.size() * quality;
+						todo = quality * _workQueue.size() * quality;
 					}
 				}
 				bsupply(12345)

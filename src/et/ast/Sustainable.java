@@ -1,6 +1,8 @@
 package et.ast;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import polyglot.ast.Block;
 import polyglot.ast.Block_c;
@@ -22,6 +24,7 @@ public class Sustainable extends Stmt_c {
 	private Block block;
 	private BSupply supply;
 	private Demand demand;
+	private Set<String> triggers = new HashSet<String>();
 
 	public Sustainable(Position pos, Block block, BSupply supply, Demand demand) {
 		super(pos);
@@ -30,6 +33,14 @@ public class Sustainable extends Stmt_c {
 		this.supply = supply;
 	}
 
+	public void addTrigger(String string) {
+		triggers.add(string);
+	}
+	
+	public Set<String> getTriggers() {
+		return triggers;
+	}
+	
 	@Override
 	public Term firstChild() {
 		return block;
@@ -82,13 +93,14 @@ public class Sustainable extends Stmt_c {
 		w.write("return mode;"); w.newline();
 		w.write("}"); w.newline();
 		w.begin(8);
-		w.write("public void calibrate() {"); w.newline();
+		w.write("public double calibrate(double input) {"); w.newline();
 		w.write("int bLeft = BatteryInfo.getRemainingCap();"); w.newline();
 		w.write("double sratio = (budget - (bInitial - bLeft))/budget;"); w.newline();
 		w.write("double dratio = (double)(" + demand.getRest()+ ")/(" + demand.getOverall() + ");"); w.newline();
 		w.write("if (sratio > dratio * 1.1 && mode < $UTILMODES.$MAX) ++mode;"); w.newline();
-		w.end();
 		w.write("else if (dratio > sratio * 1.1 && mode > 0) --mode;"); w.newline();
+		w.end();
+		w.write("return input;"); w.newline();
 		w.end();
 		w.write("}"); w.newline();
 		w.write("};"); w.newline();

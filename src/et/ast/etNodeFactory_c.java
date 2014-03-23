@@ -34,6 +34,14 @@ public class etNodeFactory_c extends csNodeFactory_c implements etNodeFactory {
     	FieldAssign n = new EcoFieldAssign_c(pos, left, op, right);
         return n;
     }
+
+    @Override
+    public Binary Binary(Position pos, Expr left, Binary.Operator op, Expr right) {
+        Binary n = new EcoBinary_c(pos, left, op, right);
+        //n = (Binary) n.ext(extFactory.extBinary());
+        //n = (Binary) n.del(delFactory.delBinary());
+        return n;
+    }
 	
 	public Node Select(Expr pattern) {
 		return new Select_c(pattern.position(), pattern);

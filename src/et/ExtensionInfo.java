@@ -5,6 +5,8 @@ import et.ast.*;
 import et.parse.Grm;
 import et.parse.Lexer_c;
 import et.types.*;
+import et.visit.MarkPass;
+import et.visit.CalibratePass;
 import et.visit.CT2OTPropPass;
 import et.visit.ET1stPass;
 import et.visit.ET2ndPass;
@@ -95,6 +97,38 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 			});
 		}
 
+		public Goal MarkPass(final Job job) {
+			TypeSystem ts = job.extensionInfo().typeSystem();
+			NodeFactory nf = job.extensionInfo().nodeFactory();
+
+			Goal g = internGoal(new VisitorGoal(job, new MarkPass(job, ts, nf)) {
+				public Collection<Goal> prerequisiteGoals(Scheduler scheduler) {
+					List<Goal> l = new ArrayList<Goal>();
+					l.addAll(super.prerequisiteGoals(scheduler));
+					l.add(scheduler.TypeChecked(job));
+					// l.add(PrePassBarrier());
+					return l;
+				}
+			});
+			return g;
+		}
+
+		public Goal CalibratePass(final Job job) {
+			TypeSystem ts = job.extensionInfo().typeSystem();
+			NodeFactory nf = job.extensionInfo().nodeFactory();
+
+			Goal g = internGoal(new VisitorGoal(job, new CalibratePass(job, ts, nf)) {
+				public Collection<Goal> prerequisiteGoals(Scheduler scheduler) {
+					List<Goal> l = new ArrayList<Goal>();
+					l.addAll(super.prerequisiteGoals(scheduler));
+					l.add(scheduler.TypeChecked(job));
+					// l.add(PrePassBarrier());
+					return l;
+				}
+			});
+			return g;
+		}
+
 		public Goal FirstPass(final Job job) {
 			TypeSystem ts = job.extensionInfo().typeSystem();
 			NodeFactory nf = job.extensionInfo().nodeFactory();
@@ -162,6 +196,8 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 					// l.add(ExpressionFlattener(job));
 					// l.add(SecondPass(job));
 					//l.add(FirstPass(job));
+					l.add(MarkPass(job));
+					l.add(CalibratePass(job));
 					return l;
 				}
 			});

@@ -7,7 +7,7 @@ import et.parse.Lexer_c;
 import et.types.*;
 import et.visit.MarkPass;
 import et.visit.CalibratePass;
-import et.visit.CT2OTPropPass;
+//import et.visit.CT2OTPropPass;
 import et.visit.ET1stPass;
 import et.visit.ET2ndPass;
 import polyglot.ast.*;
@@ -72,21 +72,21 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 		// return g;
 		// }
 
-		public Goal CT2OTPropPass(final Job job) {
-			TypeSystem ts = job.extensionInfo().typeSystem();
-			NodeFactory nf = job.extensionInfo().nodeFactory();
-
-			Goal g = internGoal(new VisitorGoal(job, new CT2OTPropPass(job, ts,
-					nf)) {
-				public Collection<Goal> prerequisiteGoals(Scheduler scheduler) {
-					List<Goal> l = new ArrayList<Goal>();
-					l.addAll(super.prerequisiteGoals(scheduler));
-					l.add(FirstPassBarrier());
-					return l;
-				}
-			});
-			return g;
-		}
+//		public Goal CT2OTPropPass(final Job job) {
+//			TypeSystem ts = job.extensionInfo().typeSystem();
+//			NodeFactory nf = job.extensionInfo().nodeFactory();
+//
+//			Goal g = internGoal(new VisitorGoal(job, new CT2OTPropPass(job, ts,
+//					nf)) {
+//				public Collection<Goal> prerequisiteGoals(Scheduler scheduler) {
+//					List<Goal> l = new ArrayList<Goal>();
+//					l.addAll(super.prerequisiteGoals(scheduler));
+//					l.add(FirstPassBarrier());
+//					return l;
+//				}
+//			});
+//			return g;
+//		}
 
 		public Goal FirstPassBarrier() {
 			JLScheduler scheduler = (JLScheduler) extInfo.scheduler();
@@ -145,14 +145,14 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 			return g;
 		}
 
-		public Goal ClosureBarrier() {
-			JLScheduler scheduler = (JLScheduler) extInfo.scheduler();
-			return internGoal(new Barrier("My_BARRIER", scheduler) {
-				public Goal goalForJob(Job job) {
-					return CT2OTPropPass(job);
-				}
-			});
-		}
+//		public Goal ClosureBarrier() {
+//			JLScheduler scheduler = (JLScheduler) extInfo.scheduler();
+//			return internGoal(new Barrier("My_BARRIER", scheduler) {
+//				public Goal goalForJob(Job job) {
+//					return CT2OTPropPass(job);
+//				}
+//			});
+//		}
 
 		public Goal SecondPass(final Job job) {
 			TypeSystem ts = job.extensionInfo().typeSystem();
@@ -162,7 +162,7 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 				public Collection<Goal> prerequisiteGoals(Scheduler scheduler) {
 					List<Goal> l = new ArrayList<Goal>();
 					// l.addAll(super.prerequisiteGoals(scheduler));
-					l.add(ClosureBarrier());
+					l.add(FirstPassBarrier());
 					return l;
 				}
 			});
@@ -194,10 +194,9 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 					// l.add(LocalClassRemover(job));
 					// l.add(FlattenVisitor(job));
 					// l.add(ExpressionFlattener(job));
-					// l.add(SecondPass(job));
-					//l.add(FirstPass(job));
-					l.add(MarkPass(job));
-					l.add(CalibratePass(job));
+					 l.add(SecondPass(job));
+//					l.add(MarkPass(job));
+//					l.add(CalibratePass(job));
 					return l;
 				}
 			});

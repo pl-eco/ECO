@@ -23,6 +23,7 @@ import et.ast.MPatternApp;
 import et.ast.MPattern_Init_c;
 import et.ast.MPtnAppID;
 import et.ast.Reconstruct_c;
+import et.ast.Select_c;
 import et.data.AdaptID;
 import et.data.AttributeID;
 import et.data.ReconstructID;
@@ -93,6 +94,12 @@ public class ET1stPass extends CS1stPass {
 			if (parent instanceof Field || parent instanceof Call) {
 				((ETField_c) m).setShortHand();
 			}
+		} else if(m instanceof Select_c){
+			//set id to select ast node
+			Select_c select = (Select_c) m;
+			
+			ID sltID = CSUtil.getID(select.getExpr().type());
+			CSUtil.setID(select, sltID);
 		}
 
 		return m;

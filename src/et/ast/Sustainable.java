@@ -18,7 +18,7 @@ import polyglot.util.Position;
 import polyglot.visit.CFGBuilder;
 import polyglot.visit.NodeVisitor;
 import polyglot.visit.PrettyPrinter;
-import tools.BatteryInfo;
+//import tools.BatteryInfo;
 
 public class Sustainable extends Stmt_c {
 	private Block block;

@@ -24,7 +24,8 @@ public class Sustainable extends Stmt_c {
 	private Block block;
 	private BSupply supply;
 	private Demand demand;
-	private Set<String> triggers = new HashSet<String>();
+	private Set<String> fieldTriggers = new HashSet<String>();
+	private Set<String> localTriggers = new HashSet<String>();
 
 	public Sustainable(Position pos, Block block, BSupply supply, Demand demand) {
 		super(pos);
@@ -33,12 +34,20 @@ public class Sustainable extends Stmt_c {
 		this.supply = supply;
 	}
 
-	public void addTrigger(String string) {
-		triggers.add(string);
+	public void addFieldTrigger(String string) {
+		fieldTriggers.add(string);
 	}
 	
-	public Set<String> getTriggers() {
-		return triggers;
+	public Set<String> getFieldTriggers() {
+		return fieldTriggers;
+	}
+
+	public void addLocalTrigger(String string) {
+		localTriggers.add(string);
+	}
+	
+	public Set<String> getLocalTriggers() {
+		return localTriggers;
 	}
 	
 	@Override
@@ -96,7 +105,11 @@ public class Sustainable extends Stmt_c {
 		w.write("public double calibrate(double input) {"); w.newline();
 		w.write("int bLeft = BatteryInfo.getRemainingCap();"); w.newline();
 		w.write("double sratio = (budget - (bInitial - bLeft))/budget;"); w.newline();
-		w.write("double dratio = (double)(" + demand.getRest()+ ")/(" + demand.getOverall() + ");"); w.newline();
+		w.write("double dratio = (double)(");
+		print(demand.getRest(), w, tr);
+		w.write(")/(");
+		print(demand.getOverall(), w, tr);
+		w.write(");"); w.newline();
 		w.write("if (sratio > dratio * 1.1 && mode < $UTILMODES.$MAX) ++mode;"); w.newline();
 		w.write("else if (dratio > sratio * 1.1 && mode > 0) --mode;"); w.newline();
 		w.end();

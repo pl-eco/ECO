@@ -17,10 +17,16 @@ public class ETLocal_c extends Local_c {
 	 */
 	private boolean isShortHandForm = false;
 
+	private boolean calibrate = false;
+	
 	public ETLocal_c(Position pos, Id name) {
 		super(pos, name);
 	}
 
+	public void markCalibrate() {
+		calibrate = true;
+	}
+	
 	public void setShortHand() {
 		isShortHandForm = true;
 	}
@@ -37,10 +43,12 @@ public class ETLocal_c extends Local_c {
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		super.prettyPrint(w, tr);
+		/*
 		if (isShortHandForm) {
 			String mptApp = MPatternApp.printMptnApp(ECMClassDecl_c
 					.getModeFieldNameOfClass(enclosingClassName));
 			w.write(mptApp);
 		}
+		*/
 	}
 }

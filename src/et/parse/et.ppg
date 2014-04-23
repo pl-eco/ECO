@@ -243,6 +243,13 @@ bsupply_clause ::=
 			{: RESULT = parser.nf.BSupply(parser.pos(n, c), a); :}
 	;
 	
+/*
+ * 
+ * demand_expression ::=
+ * 		same as expression, except each identifier comes with optional {N}
+ * 
+ */
+	
 demand_clause ::=
 		DEMAND:n LPAREN expression:a RPAREN ARROW LPAREN expression:b RPAREN:c 
 			{: RESULT = parser.nf.Demand(parser.pos(n, c), a, b); :}

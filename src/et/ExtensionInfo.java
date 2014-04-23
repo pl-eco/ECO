@@ -194,9 +194,10 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 					// l.add(LocalClassRemover(job));
 					// l.add(FlattenVisitor(job));
 					// l.add(ExpressionFlattener(job));
-					 l.add(SecondPass(job));
-//					l.add(MarkPass(job));
-//					l.add(CalibratePass(job));
+					//l.add(FirstPass(job));
+					//l.add(SecondPass(job));
+					l.add(MarkPass(job));
+					l.add(CalibratePass(job));
 					return l;
 				}
 			});

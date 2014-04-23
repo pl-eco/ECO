@@ -3,11 +3,14 @@ package et.visit;
 import java.util.HashSet;
 import java.util.Set;
 
+import et.ast.ETField_c;
+import et.ast.ETLocal_c;
 import et.ast.Sustainable;
 import et.ast.EcoFieldAssign_c;
 import et.ast.Demand;
 import polyglot.ast.Assign;
 import polyglot.ast.Field;
+import polyglot.ast.Local;
 import polyglot.ast.Node;
 import polyglot.ast.NodeFactory;
 import polyglot.ast.Special;
@@ -38,10 +41,13 @@ public class MarkPass extends TypeChecker {
 	@Override
 	public Node leaveCall(Node parent, Node old, Node n, NodeVisitor v) {
 		if (demand && n instanceof Field) {
-			Field field = (Field) n;
+			ETField_c field = (ETField_c) n;
 			if (field.target() instanceof Special) {
-				sustainable.addTrigger(field.name());
+				sustainable.addFieldTrigger(field.name());
 			}
+		} else if (demand && n instanceof Local) {
+			ETLocal_c local = (ETLocal_c) n;
+			sustainable.addLocalTrigger(local.name());
 		} else if (n instanceof Sustainable) {
 			sustainable = null;
 		} else if (n instanceof Demand) {

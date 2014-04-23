@@ -1,8 +1,10 @@
 package et.ast;
 
+import polyglot.ast.Field_c;
 import polyglot.ast.Id;
 import polyglot.ast.Node;
 import polyglot.ast.Receiver;
+import polyglot.ast.Special;
 import polyglot.ext.jl5.ast.JL5Field_c;
 import polyglot.types.SemanticException;
 import polyglot.util.CodeWriter;
@@ -40,12 +42,15 @@ public class ETField_c extends JL5Field_c {
 
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
+		
 		super.prettyPrint(w, tr);
+		/*
 		if (isShortHandForm) {
 			String mptApp = MPatternApp.printMptnApp(ECMClassDecl_c
 					.getModeFieldNameOfClass(enclosingClassName));
 			w.write(mptApp);
 		}
+		*/
 	}
 
 }

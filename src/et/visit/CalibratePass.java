@@ -3,15 +3,18 @@ package et.visit;
 import java.util.HashSet;
 import java.util.Set;
 
+import et.ast.ETLocalDecl_c;
 import et.ast.ETLocal_c;
 import et.ast.EcoLocalAssign_c;
 import et.ast.Sustainable;
 import et.ast.Demand;
 import et.ast.UniformStmt;
 import et.ast.EcoFieldAssign_c;
+import et.types.ETLocalInstance_c;
 import polyglot.ast.Assign;
 import polyglot.ast.Field;
 import polyglot.ast.Local;
+import polyglot.ast.LocalDecl;
 import polyglot.ast.Node;
 import polyglot.ast.NodeFactory;
 import polyglot.ast.Special;
@@ -43,7 +46,17 @@ public class CalibratePass extends TypeChecker {
 	
 	@Override
 	public Node leaveCall(Node parent, Node old, Node n, NodeVisitor v) {
-		if (fieldTriggers != null && !inUniform && n instanceof EcoFieldAssign_c) {
+		if (n instanceof LocalDecl) {
+			LocalDecl decl = (LocalDecl) n;
+			if (((ETLocalInstance_c) decl.localInstance()).calibrate) {
+				((ETLocalDecl_c) decl).markCalibrate();
+			}
+		} else if (n instanceof Local) {
+			Local local = (Local) n;
+			if (((ETLocalInstance_c) context.findLocalSilent(local.name())).calibrate) {
+				((ETLocal_c) local).markCalibrate();
+			}
+		} else if (fieldTriggers != null && !inUniform && n instanceof EcoFieldAssign_c) {
 			EcoFieldAssign_c assign = (EcoFieldAssign_c) n;
 			if (assign.left() instanceof Field) {
 				Field field = (Field) assign.left();
@@ -56,7 +69,6 @@ public class CalibratePass extends TypeChecker {
 			if (assign.left() instanceof Local) {
 				Local local = (Local) assign.left();
 				if (localTriggers.contains(local.name())) {
-					((ETLocal_c) local).markCalibrate();
 					assign.markCalibrate();
 				}
 			}

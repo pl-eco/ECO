@@ -23,6 +23,13 @@ public class etTypeSystem_c extends csTypeSystem_c implements etTypeSystem {
 	}
 
 	@Override
+	public LocalInstance localInstance(Position pos, Flags flags, Type type,
+			String name) {
+		assert_(type);
+		return new ETLocalInstance_c(this, pos, flags, type, name);
+	}
+	
+	@Override
 	public Context createContext() {
 		return new ECMContext_c(this);
 	}

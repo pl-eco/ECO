@@ -8,6 +8,7 @@ import et.ast.ETLocal_c;
 import et.ast.Sustainable;
 import et.ast.EcoFieldAssign_c;
 import et.ast.Demand;
+import et.types.ETLocalInstance_c;
 import polyglot.ast.Assign;
 import polyglot.ast.Field;
 import polyglot.ast.Local;
@@ -47,7 +48,7 @@ public class MarkPass extends TypeChecker {
 			}
 		} else if (demand && n instanceof Local) {
 			ETLocal_c local = (ETLocal_c) n;
-			sustainable.addLocalTrigger(local.name());
+			((ETLocalInstance_c) context.findLocalSilent(local.name())).markCalibrate();
 		} else if (n instanceof Sustainable) {
 			sustainable = null;
 		} else if (n instanceof Demand) {

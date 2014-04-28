@@ -124,7 +124,8 @@ public class Music implements OnCompletionListener{
 				duration = mediaPlayer.getDuration();
 
 				// TODO:
-				//int duration = 0;
+				int duration;
+				duration = 10;
 				// local variable, mark, change to array of size 1,
 				// change local decl
 				// and local

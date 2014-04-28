@@ -20,7 +20,15 @@ import cs.ast.csNodeFactory_c;
  * NodeFactory for et extension.
  */
 public class etNodeFactory_c extends csNodeFactory_c implements etNodeFactory {
+	
 
+	@Override
+    public LocalDecl LocalDecl(Position pos, Flags flags, TypeNode type,
+            Id name, Expr init) {
+        LocalDecl n = new ETLocalDecl_c(pos, flags, type, name, init);
+        return n;
+    }
+	
     @Override
     public LocalAssign LocalAssign(Position pos, Local left,
             Assign.Operator op, Expr right) {

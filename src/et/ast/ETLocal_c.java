@@ -43,6 +43,9 @@ public class ETLocal_c extends Local_c {
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		super.prettyPrint(w, tr);
+		if (calibrate) {
+			w.write("[0]");
+		}
 		/*
 		if (isShortHandForm) {
 			String mptApp = MPatternApp.printMptnApp(ECMClassDecl_c

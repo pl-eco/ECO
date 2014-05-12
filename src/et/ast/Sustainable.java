@@ -25,7 +25,6 @@ public class Sustainable extends Stmt_c {
 	private BSupply supply;
 	private Demand demand;
 	private Set<String> fieldTriggers = new HashSet<String>();
-	private Set<String> localTriggers = new HashSet<String>();
 
 	public Sustainable(Position pos, Block block, BSupply supply, Demand demand) {
 		super(pos);
@@ -40,14 +39,6 @@ public class Sustainable extends Stmt_c {
 	
 	public Set<String> getFieldTriggers() {
 		return fieldTriggers;
-	}
-
-	public void addLocalTrigger(String string) {
-		localTriggers.add(string);
-	}
-	
-	public Set<String> getLocalTriggers() {
-		return localTriggers;
 	}
 	
 	@Override
@@ -92,7 +83,7 @@ public class Sustainable extends Stmt_c {
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		w.begin(0);
 		w.begin(4);
-		w.write("tools.Calibrator $calibrator = new tools.Calibrator() {"); w.newline();
+		w.write("tools.CalibratorStack.stack.push(new tools.Calibrator() {"); w.newline();
 		w.write("public int mode = $UTILMODES.$MAX;"); w.newline();
 		w.write("private double budget = " + supply.getNumeric() + ";"); w.newline();
 		w.write("private int bInitial = BatteryInfo.getRemainingCap();"); w.newline();
@@ -116,8 +107,9 @@ public class Sustainable extends Stmt_c {
 		w.write("return input;"); w.newline();
 		w.end();
 		w.write("}"); w.newline();
-		w.write("};"); w.newline();
-		block.prettyPrint(w, tr);
+		w.write("});"); w.newline();
+		block.prettyPrint(w, tr); w.newline();
+		w.write("tools.CalibratorStack.stack.pop();"); w.newline();
 		w.end();
 	}
 }

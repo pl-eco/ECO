@@ -16,8 +16,8 @@ import polyglot.ast.NodeFactory;
 import et.ast.Adapt_c;
 import et.ast.Attribute_c;
 import et.ast.ECMClassDecl_c;
-import et.ast.ETField_c;
-import et.ast.ETLocal_c;
+import et.ast.EcoField_c;
+import et.ast.EcoLocal_c;
 import et.ast.MPattern;
 import et.ast.MPatternApp;
 import et.ast.MPattern_Init_c;
@@ -87,12 +87,12 @@ public class ET1stPass extends CS1stPass {
 		} else if (m instanceof Local) {
 			// set if MPattern is for short hand form usage
 			if (parent instanceof Field || parent instanceof Call) {
-				((ETLocal_c) m).setShortHand();
+				((EcoLocal_c) m).setShortHand();
 			}
 		} else if (m instanceof Field) {
 			// set if MPattern is for short hand form usage
 			if (parent instanceof Field || parent instanceof Call) {
-				((ETField_c) m).setShortHand();
+				((EcoField_c) m).setShortHand();
 			}
 		} else if(m instanceof Select_c){
 			//set id to select ast node

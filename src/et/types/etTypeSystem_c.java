@@ -26,7 +26,7 @@ public class etTypeSystem_c extends csTypeSystem_c implements etTypeSystem {
 	public LocalInstance localInstance(Position pos, Flags flags, Type type,
 			String name) {
 		assert_(type);
-		return new ETLocalInstance_c(this, pos, flags, type, name);
+		return new EcoLocalInstance_c(this, pos, flags, type, name);
 	}
 	
 	@Override

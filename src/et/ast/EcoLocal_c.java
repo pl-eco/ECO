@@ -9,7 +9,7 @@ import polyglot.util.Position;
 import polyglot.visit.PrettyPrinter;
 import polyglot.visit.TypeChecker;
 
-public class ETLocal_c extends Local_c {
+public class EcoLocal_c extends Local_c {
 	private String enclosingClassName;
 	/*
 	 * the short hand form of mpatter usage can only be applied on: 1. method
@@ -19,7 +19,7 @@ public class ETLocal_c extends Local_c {
 
 	private boolean calibrate = false;
 	
-	public ETLocal_c(Position pos, Id name) {
+	public EcoLocal_c(Position pos, Id name) {
 		super(pos, name);
 	}
 

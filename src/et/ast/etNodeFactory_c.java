@@ -25,7 +25,7 @@ public class etNodeFactory_c extends csNodeFactory_c implements etNodeFactory {
 	@Override
     public LocalDecl LocalDecl(Position pos, Flags flags, TypeNode type,
             Id name, Expr init) {
-        LocalDecl n = new ETLocalDecl_c(pos, flags, type, name, init);
+        LocalDecl n = new EcoLocalDecl_c(pos, flags, type, name, init);
         return n;
     }
 	
@@ -70,7 +70,7 @@ public class etNodeFactory_c extends csNodeFactory_c implements etNodeFactory {
 
 	@Override
 	public Local Local(Position pos, Id name) {
-		Local n = new ETLocal_c(pos, name);
+		Local n = new EcoLocal_c(pos, name);
 		return n;
 	}
 
@@ -128,7 +128,7 @@ public class etNodeFactory_c extends csNodeFactory_c implements etNodeFactory {
 
 	@Override
 	public Field Field(Position pos, Receiver target, Id name) {
-		Field n = new ETField_c(pos, target, name);
+		Field n = new EcoField_c(pos, target, name);
 		return n;
 	}
 

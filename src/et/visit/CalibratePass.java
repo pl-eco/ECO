@@ -3,21 +3,26 @@ package et.visit;
 import java.util.HashSet;
 import java.util.Set;
 
-import et.ast.ETLocalDecl_c;
-import et.ast.ETLocal_c;
+import et.ast.EcoField_c;
+import et.ast.EcoLocalDecl_c;
+import et.ast.EcoLocal_c;
 import et.ast.EcoLocalAssign_c;
 import et.ast.Sustainable;
 import et.ast.Demand;
 import et.ast.UniformStmt;
 import et.ast.EcoFieldAssign_c;
-import et.types.ETLocalInstance_c;
+import et.types.EcoLocalInstance_c;
 import polyglot.ast.Assign;
+import polyglot.ast.Call;
 import polyglot.ast.Field;
+import polyglot.ast.FieldAssign;
 import polyglot.ast.Local;
+import polyglot.ast.LocalAssign;
 import polyglot.ast.LocalDecl;
 import polyglot.ast.Node;
 import polyglot.ast.NodeFactory;
 import polyglot.ast.Special;
+import polyglot.ast.Variable;
 import polyglot.frontend.Job;
 import polyglot.types.SemanticException;
 import polyglot.types.TypeSystem;
@@ -29,52 +34,61 @@ public class CalibratePass extends TypeChecker {
 		super(job, ts, nf);
 	}
 
-	Set<String> fieldTriggers = null;
-	Set<String> localTriggers = null;
+	boolean inSustainable = false;
 	boolean inUniform = false;
-
+	
 	@Override
     protected NodeVisitor enterCall(Node n) throws SemanticException {
 		if (n instanceof Sustainable) {
-			fieldTriggers = ((Sustainable) n).getFieldTriggers();
-			localTriggers = ((Sustainable) n).getLocalTriggers();
+			inSustainable = true;
 		} else if (n instanceof UniformStmt) {
 			inUniform = true;
 		}
 		return this;
 	}
-	
+
 	@Override
 	public Node leaveCall(Node parent, Node old, Node n, NodeVisitor v) {
 		if (n instanceof LocalDecl) {
 			LocalDecl decl = (LocalDecl) n;
-			if (((ETLocalInstance_c) decl.localInstance()).calibrate) {
-				((ETLocalDecl_c) decl).markCalibrate();
+			if (((EcoLocalInstance_c) decl.localInstance()).calibrate) {
+				((EcoLocalDecl_c) decl).markCalibrate();
 			}
 		} else if (n instanceof Local) {
 			Local local = (Local) n;
-			if (((ETLocalInstance_c) context.findLocalSilent(local.name())).calibrate) {
-				((ETLocal_c) local).markCalibrate();
+			if (((EcoLocalInstance_c) context.findVariableSilent(local.name())).calibrate) {
+				((EcoLocal_c) local).markCalibrate();
 			}
-		} else if (fieldTriggers != null && !inUniform && n instanceof EcoFieldAssign_c) {
+		} else if (n instanceof FieldAssign) {
 			EcoFieldAssign_c assign = (EcoFieldAssign_c) n;
+			//System.out.println("field assign: " + assign);
 			if (assign.left() instanceof Field) {
 				Field field = (Field) assign.left();
-				if (field.target() instanceof Special && fieldTriggers.contains(field.name())) {
-					assign.markCalibrate();
+				for (Field demand : MarkPass.demandFields) {
+					//System.out.println("demand: " + demand);
+					if ((field.target().type().isSubtype(demand.target().type()) ||
+							demand.target().type().isSubtype(field.target().type())) &&
+							field.name().equals(demand.name())) {
+						//System.out.println("field: " + field);
+						assign.markCalibrate();
+					}
 				}
+				//if (((EcoFieldInstance_c) context.findVariableSilent(field.name())).calibrate) {
+				//	assign.markCalibrate();
+				//	System.out.println("field calibrate: " + field);
+				//}
 			}
-		} else if (localTriggers != null && !inUniform && n instanceof EcoLocalAssign_c) {	
+		} else if (inSustainable && !inUniform && n instanceof LocalAssign) {	
 			EcoLocalAssign_c assign = (EcoLocalAssign_c) n;
 			if (assign.left() instanceof Local) {
 				Local local = (Local) assign.left();
-				if (localTriggers.contains(local.name())) {
+				if (((EcoLocalInstance_c) context.findVariableSilent(local.name())).calibrate) {
 					assign.markCalibrate();
+					System.out.println("local calibrate: " + local);
 				}
 			}
 		} else if (n instanceof Sustainable) {
-			fieldTriggers = null;
-			localTriggers = null;
+			inSustainable = false;
 		} else if (n instanceof UniformStmt) {
 			inUniform = false;
 		}

@@ -1,6 +1,10 @@
 package et.ast;
 
+import cs.graph.CSGraph;
+import cs.types.CSObjectType;
+import cs.types.csTypeSystem_c;
 import et.types.PatternType;
+import et.visit.MarkPass;
 import polyglot.ast.Expr;
 import polyglot.ast.Field;
 import polyglot.ast.FieldAssign_c;
@@ -28,8 +32,21 @@ public class EcoFieldAssign_c extends FieldAssign_c {
 
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
+		// check alias against demandFields, if match calibrate
+		CSGraph graph = ((csTypeSystem_c) this.type().typeSystem()).getGraph();
+
+		Field field = (Field) this.left();
+		String fieldAlias = ((CSObjectType) field.target().type()).getAliasName();
+		
+		for (Field demand : MarkPass.demandFields) {
+			String demandAlias = ((CSObjectType) demand.target().type()).getAliasName();
+			if (graph.checkAlias(fieldAlias, demandAlias)) {
+				System.out.println("field: " + field);
+				System.out.println("demand: " + demand);
+			}
+		}
 		if (calibrate) {
-			w.write("$calibrator.calibrate(");
+			w.write("tools.CalibratorStack.stack.peek().calibrate(");
 		}
 		super.prettyPrint(w, tr);
 		if (calibrate) {

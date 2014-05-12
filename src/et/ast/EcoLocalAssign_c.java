@@ -27,7 +27,7 @@ public class EcoLocalAssign_c extends LocalAssign_c {
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		if (calibrate) {
-			w.write("$calibrator.calibrate(");
+			w.write("tools.CalibratorStack.stack.peek().calibrate(");
 		}
 		super.prettyPrint(w, tr);
 		if (calibrate) {

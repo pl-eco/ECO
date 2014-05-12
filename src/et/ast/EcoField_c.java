@@ -12,7 +12,7 @@ import polyglot.util.Position;
 import polyglot.visit.PrettyPrinter;
 import polyglot.visit.TypeChecker;
 
-public class ETField_c extends JL5Field_c {
+public class EcoField_c extends JL5Field_c {
 	private String enclosingClassName;
 	/*
 	 * the short hand form of mpatter usage can only be applied on: 1. method
@@ -20,7 +20,7 @@ public class ETField_c extends JL5Field_c {
 	 */
 	private boolean isShortHandForm = false;
 
-	public ETField_c(Position pos, Receiver target, Id name) {
+	public EcoField_c(Position pos, Receiver target, Id name) {
 		super(pos, target, name);
 	}
 

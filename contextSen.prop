@@ -7,7 +7,8 @@ debug=true
 
 #the name and the paremeter of the main method
 #entryName=onCreate#android.os.Bundle|
-entryName=main#java.lang.String[]|
+#entryName=main#java.lang.String[]|
+entryName=play#android.widget.SeekBar|android.content.Context|
 #entryName=initialize#;paint#android.graphics.Canvas
 
 #extraMethod=ch03.game.sb.SpaceBlasterGame.initialize#;ch03.game.sb.SpaceBlasterGame.onDraw#android.graphics.Canvas

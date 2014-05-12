@@ -19,7 +19,6 @@ import android.os.PowerManager;
 import android.text.format.Time;
 import android.widget.SeekBar;
 
-
 modes {
 	high <: full;
 	low <: high;
@@ -105,10 +104,29 @@ public class Music implements OnCompletionListener{
 		public Object calibrate(Object input);
 	}
 	*/
-
+	
+	// static stack class push on each sustainable block, pop on every access
+	// alias analysis
+	// tricky: conservativeness, more pop than needed
+	public class PositionWrapper {
+		public int current;
+		public double test;
+	}
+	
+	public class SubWrapper extends PositionWrapper {
+	}
+	
+	public class PositionGetter {
+		public void getPosition(PositionWrapper wrapper, MediaPlayer mediaPlayer) {
+			wrapper.current = mediaPlayer.getCurrentPosition();
+			wrapper.test = mediaPlayer.getCurrentPosition();
+		}
+	}
+	
 	public class Progress extends Thread {
 		public volatile boolean playing = true;
-		private int current = 0;
+		//public int current = 0;
+		SubWrapper wrapper = new SubWrapper();
 		private int duration = 0;
 		public void run() {
 			
@@ -123,17 +141,17 @@ public class Music implements OnCompletionListener{
 		 	
 				duration = mediaPlayer.getDuration();
 
-				// TODO:
-				int duration;
-				duration = 10;
-				// local variable, mark, change to array of size 1,
-				// change local decl
-				// and local
+				// referenced local variables are transformed into final array of size 1
+				//int duration;
+				//duration = 10;
+				
+				PositionGetter getter = new PositionGetter();
 				
 			 	sustainable {
 					while (playing) {
-						current = mediaPlayer.getCurrentPosition();
-						seek.setProgress(seek.getMax() * current / duration);
+						getter.getPosition(wrapper, mediaPlayer);
+						//wrapper.current = mediaPlayer.getCurrentPosition();
+						seek.setProgress(seek.getMax() * wrapper.current / duration);
 						mediaPlayer.setAuxEffectSendLevel(effectLevel + 0F);
 						mediaPlayer.setWakeMode(context, wakeLock + 0);
 						try {
@@ -144,7 +162,8 @@ public class Music implements OnCompletionListener{
 					}
 				}
 				bsupply(5)
-				demand(duration) -> (Progress.this.duration - current);
+				demand(duration) -> (duration - wrapper.current);
+				//FIXME: problem with Progress.this.duration, special field targets
 			/*/
 
 		 	int[] sleepTime = new int[] { 100, 10, 1 };

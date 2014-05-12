@@ -128,6 +128,9 @@ public class Music implements OnCompletionListener{
 		//public int current = 0;
 		SubWrapper wrapper = new SubWrapper();
 		private int duration = 0;
+		public void run2() {
+			wrapper = null;
+		}
 		public void run() {
 			
 			//*
@@ -149,8 +152,8 @@ public class Music implements OnCompletionListener{
 				
 			 	sustainable {
 					while (playing) {
-						getter.getPosition(wrapper, mediaPlayer);
-						//wrapper.current = mediaPlayer.getCurrentPosition();
+						//getter.getPosition(wrapper, mediaPlayer);
+						wrapper.current = mediaPlayer.getCurrentPosition();
 						seek.setProgress(seek.getMax() * wrapper.current / duration);
 						mediaPlayer.setAuxEffectSendLevel(effectLevel + 0F);
 						mediaPlayer.setWakeMode(context, wakeLock + 0);

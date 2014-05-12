@@ -93,7 +93,7 @@ public class Sustainable extends Stmt_c {
 		w.write("return mode;"); w.newline();
 		w.write("}"); w.newline();
 		w.begin(8);
-		w.write("public double calibrate(double input) {"); w.newline();
+		w.write("public Object calibrate(Object input) {"); w.newline();
 		w.write("int bLeft = BatteryInfo.getRemainingCap();"); w.newline();
 		w.write("double sratio = (budget - (bInitial - bLeft))/budget;"); w.newline();
 		w.write("double dratio = (double)(");

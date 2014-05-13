@@ -86,7 +86,7 @@ public class Sustainable extends Stmt_c {
 		w.write("tools.CalibratorStack.stack.push(new tools.Calibrator() {"); w.newline();
 		w.write("public int mode = $UTILMODES.$MAX;"); w.newline();
 		w.write("private double budget = " + supply.getNumeric() + ";"); w.newline();
-		w.write("private int bInitial = BatteryInfo.getRemainingCap();"); w.newline();
+		w.write("private int bInitial = tools.BatteryInfo.getRemainingCap();"); w.newline();
 		w.begin(8);
 		w.write("public int getMode() {"); w.newline();
 		w.end();
@@ -94,7 +94,7 @@ public class Sustainable extends Stmt_c {
 		w.write("}"); w.newline();
 		w.begin(8);
 		w.write("public Object calibrate(Object input) {"); w.newline();
-		w.write("int bLeft = BatteryInfo.getRemainingCap();"); w.newline();
+		w.write("int bLeft = tools.BatteryInfo.getRemainingCap();"); w.newline();
 		w.write("double sratio = (budget - (bInitial - bLeft))/budget;"); w.newline();
 		w.write("double dratio = (double)(");
 		print(demand.getRest(), w, tr);

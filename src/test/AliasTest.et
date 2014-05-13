@@ -1,0 +1,29 @@
+package src.test;
+
+modes {
+	high <: full;
+	low <: high;
+}
+
+class AliasTest {
+	class Bar {
+		public double value;
+	}
+	class Foo {
+		public Bar bar;
+		void foo() {
+			bar = new Bar();
+			sustainable {
+				++bar.value;
+			}
+			bsupply(1)
+			demand(bar.value) -> (bar.value + 10);
+		}
+		void foo2() {
+			bar = null;
+		}
+	}
+	public void main(String[] args) {
+		Foo foo = new Foo();
+	}
+}

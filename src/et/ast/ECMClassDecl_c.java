@@ -14,6 +14,7 @@ import polyglot.util.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cs.data.id.VariableGenerator;
 import cs.util.EasyDebugger;
 import polyglot.visit.*;
 import et.ast.mswitch.ECMContext_c;
@@ -92,6 +93,7 @@ public class ECMClassDecl_c extends JL5ClassDecl_c {
 		ECMContext_c ecmContext = (ECMContext_c) super
 				.enterChildScope(child, c);
 		ecmContext.setValues(eFlags);
+		ecmContext.currentThisAlias = VariableGenerator.nextAlias();
 
 		return ecmContext;
 	}

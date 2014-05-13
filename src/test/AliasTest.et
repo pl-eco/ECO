@@ -11,20 +11,25 @@ class AliasTest {
 	}
 	class Foo {
 		public Bar bar;
+		public Bar bar2;
 		void foo() {
 			bar = new Bar();
 			sustainable {
-				++bar.value;
+				bar.value += 1;
 			}
 			bsupply(1)
 			demand(bar.value) -> (bar.value + 10);
 		}
 		void foo2() {
-			bar = null;
-			bar.value = 0;
+			bar = bar2;
+			bar2 = bar;
+			bar2.value = 0;
+			bar2 = null;
 		}
 	}
 	public void main(String[] args) {
 		Foo foo = new Foo();
+		foo.foo();
+		foo.foo2();
 	}
 }

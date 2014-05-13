@@ -61,22 +61,16 @@ public class CalibratePass extends TypeChecker {
 			}
 		} else if (n instanceof FieldAssign) {
 			EcoFieldAssign_c assign = (EcoFieldAssign_c) n;
-			//System.out.println("field assign: " + assign);
 			if (assign.left() instanceof Field) {
 				Field field = (Field) assign.left();
 				for (Field demand : MarkPass.demandFields) {
-					//System.out.println("demand: " + demand);
 					if ((field.target().type().isSubtype(demand.target().type()) ||
 							demand.target().type().isSubtype(field.target().type())) &&
 							field.name().equals(demand.name())) {
-						//System.out.println("field: " + field);
+						System.out.println("marking: " + assign);
 						assign.markCalibrate();
 					}
 				}
-				//if (((EcoFieldInstance_c) context.findVariableSilent(field.name())).calibrate) {
-				//	assign.markCalibrate();
-				//	System.out.println("field calibrate: " + field);
-				//}
 			}
 		} else if (inSustainable && !inUniform && n instanceof LocalAssign) {	
 			EcoLocalAssign_c assign = (EcoLocalAssign_c) n;

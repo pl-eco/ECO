@@ -38,14 +38,15 @@ public class EcoFieldAssign_c extends FieldAssign_c {
 		Field field = (Field) this.left();
 		String fieldAlias = ((CSObjectType) field.target().type()).getAliasName();
 		
-		for (Field demand : MarkPass.demandFields) {
-			String demandAlias = ((CSObjectType) demand.target().type()).getAliasName();
-			System.out.println("field: " + field + " | demand: " + demand);
-			if (graph.checkAlias(fieldAlias, demandAlias)) {
-				//System.out.println("match!");
-				
-			} else {
-				calibrate = false;
+		if (calibrate) {
+			calibrate = false;
+			for (Field demand : MarkPass.demandFields) {
+				String demandAlias = ((CSObjectType) demand.target().type()).getAliasName();
+				System.out.println("field: " + field + " | demand: " + demand);
+				if (graph.checkAlias(fieldAlias, demandAlias)) {
+					calibrate = true;
+					break;
+				}
 			}
 		}
 		

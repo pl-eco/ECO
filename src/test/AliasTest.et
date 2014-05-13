@@ -21,10 +21,7 @@ class AliasTest {
 		}
 		void foo2() {
 			bar = null;
-<<<<<<< HEAD
 			bar.value = 0;
-=======
->>>>>>> 6c850a732e5590f62a28a90f4b1a3a2f748d14f8
 		}
 	}
 	public void main(String[] args) {

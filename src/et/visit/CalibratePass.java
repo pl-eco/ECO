@@ -69,6 +69,7 @@ public class CalibratePass extends TypeChecker {
 							field.name().equals(demand.name())) {
 						System.out.println("marking: " + assign);
 						assign.markCalibrate();
+						break;
 					}
 				}
 			}

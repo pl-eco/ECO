@@ -41,9 +41,11 @@ public class EcoFieldAssign_c extends FieldAssign_c {
 		if (calibrate) {
 			calibrate = false;
 			for (Field demand : MarkPass.demandFields) {
+				if (!demand.name().equals(field.name())) continue;
 				String demandAlias = ((CSObjectType) demand.target().type()).getAliasName();
 				System.out.println("field: " + field + " | demand: " + demand);
 				if (graph.checkAlias(fieldAlias, demandAlias)) {
+					System.out.println("match!");
 					calibrate = true;
 					break;
 				}

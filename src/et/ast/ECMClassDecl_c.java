@@ -35,6 +35,8 @@ public class ECMClassDecl_c extends JL5ClassDecl_c {
 	 */
 	private String modeFieldName = null;
 
+	private String fixedThisAlias = VariableGenerator.nextAlias();
+	
 	private static Map<String, Boolean> mptnClassMap = new HashMap<String, Boolean>();
 
 	/*
@@ -93,7 +95,7 @@ public class ECMClassDecl_c extends JL5ClassDecl_c {
 		ECMContext_c ecmContext = (ECMContext_c) super
 				.enterChildScope(child, c);
 		ecmContext.setValues(eFlags);
-		ecmContext.currentThisAlias = VariableGenerator.nextAlias();
+		ecmContext.currentThisAlias = fixedThisAlias;
 
 		return ecmContext;
 	}

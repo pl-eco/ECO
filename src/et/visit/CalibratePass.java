@@ -49,7 +49,11 @@ public class CalibratePass extends TypeChecker {
 
 	@Override
 	public Node leaveCall(Node parent, Node old, Node n, NodeVisitor v) {
-		if (n instanceof LocalDecl) {
+		if (n instanceof Sustainable) {
+			inSustainable = false;
+		} else if (n instanceof UniformStmt) {
+			inUniform = false;
+		} else if (n instanceof LocalDecl) {
 			LocalDecl decl = (LocalDecl) n;
 			if (((EcoLocalInstance_c) decl.localInstance()).calibrate) {
 				((EcoLocalDecl_c) decl).markCalibrate();
@@ -59,7 +63,16 @@ public class CalibratePass extends TypeChecker {
 			if (((EcoLocalInstance_c) context.findVariableSilent(local.name())).calibrate) {
 				((EcoLocal_c) local).markCalibrate();
 			}
-		} else if (n instanceof FieldAssign) {
+		} else if (inSustainable && !inUniform && n instanceof LocalAssign) {	
+			EcoLocalAssign_c assign = (EcoLocalAssign_c) n;
+			if (assign.left() instanceof Local) {
+				Local local = (Local) assign.left();
+				if (((EcoLocalInstance_c) context.findVariableSilent(local.name())).calibrate) {
+					assign.markCalibrate();
+				}
+			}
+		} else if (n instanceof FieldAssign &&
+				((inSustainable && !inUniform) || MarkPass.reachable(context.currentCode()))) {
 			EcoFieldAssign_c assign = (EcoFieldAssign_c) n;
 			if (assign.left() instanceof Field) {
 				Field field = (Field) assign.left();
@@ -67,25 +80,11 @@ public class CalibratePass extends TypeChecker {
 					if ((field.target().type().isSubtype(demand.target().type()) ||
 							demand.target().type().isSubtype(field.target().type())) &&
 							field.name().equals(demand.name())) {
-						System.out.println("marking: " + assign);
 						assign.markCalibrate();
 						break;
 					}
 				}
 			}
-		} else if (inSustainable && !inUniform && n instanceof LocalAssign) {	
-			EcoLocalAssign_c assign = (EcoLocalAssign_c) n;
-			if (assign.left() instanceof Local) {
-				Local local = (Local) assign.left();
-				if (((EcoLocalInstance_c) context.findVariableSilent(local.name())).calibrate) {
-					assign.markCalibrate();
-					System.out.println("local calibrate: " + local);
-				}
-			}
-		} else if (n instanceof Sustainable) {
-			inSustainable = false;
-		} else if (n instanceof UniformStmt) {
-			inUniform = false;
 		}
 		return n;
 	}

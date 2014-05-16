@@ -83,17 +83,19 @@ public class ModesDecl extends ClassDecl_c {
 	}
 
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
-		w.write("class " + Names.MODE_DECL_CLASS_NAME + "{  \n");
+		w.begin(4);
+		w.write("class " + Names.MODE_DECL_CLASS_NAME + "{"); w.newline();
 
 		int counter = modes.size();
-		w.write("		public static final int $MAX = " + --counter + ";\n");
+		w.write("public static final int $MAX = " + --counter + ";");
 		for (Iterator iter = modes.iterator(); iter.hasNext();) {
+			 w.newline();
 			String mode = (String) iter.next();
-			w.write("		public static final int " + mode + " = " + counter--
-					+ "; \n");
+			w.write("public static final int " + mode + " = " + counter--
+					+ ";");
 		}
-		w.write("} \n");
-
+		w.end(); w.newline();
+		w.write("}"); w.newline();
 		// System.out.println("Order: ");
 		for (String element : modesOrder) {
 			// System.out.println(element + "   ");

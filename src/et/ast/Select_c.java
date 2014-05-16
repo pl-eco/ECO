@@ -36,7 +36,7 @@ public class Select_c extends Expr_c {
 
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		printSubExpr(this.e, w, tr);
-		w.write("[tools.CalibratorStack.stack.peek().getMode()]");
+		w.write("[tools.CalibratorStack.getMode($UTILMODES.$MAX)]");
 	}
 
 	@Override

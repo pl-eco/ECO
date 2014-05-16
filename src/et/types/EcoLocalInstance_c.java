@@ -13,8 +13,4 @@ public class EcoLocalInstance_c extends LocalInstance_c {
             String name) {
         super(ts, pos, flags, type, name);
     }
-	
-	public void markCalibrate() {
-		calibrate = true;
-	}
 }

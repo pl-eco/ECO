@@ -1,7 +1,6 @@
 package et.ast;
 
 import java.util.List;
-
 import polyglot.ast.Block;
 import polyglot.ast.Node;
 import polyglot.ast.Stmt_c;
@@ -46,7 +45,25 @@ public class UniformStmt extends Stmt_c{
 	
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
-		block.prettyPrint(w, tr);
+		w.begin(0);
+		w.begin(4);
+		w.write("tools.CalibratorStack.push(new tools.Calibrator() {"); w.newline();
+		w.begin(8);
+		w.write("private tools.Calibrator original = tools.CalibratorStack.peek();"); w.newline();
+		w.write("public int getMode(int max) {"); w.newline();
+		w.end();
+		w.write("return original.getMode($UTILMODES.$MAX);"); w.newline();
+		w.write("}"); w.newline();
+		w.begin(8);
+		w.write("public Object calibrate(Object input) {"); w.newline();
+		w.end();
+		w.write("return input;"); w.newline();
+		w.end();
+		w.write("}"); w.newline();
+		w.write("});"); w.newline();
+		w.end();
+		block.prettyPrint(w, tr); w.newline();
+		w.write("tools.CalibratorStack.pop();");
 	}
 
 }

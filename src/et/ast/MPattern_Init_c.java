@@ -98,7 +98,7 @@ public class MPattern_Init_c extends Expr_c {
 		//		.append(this.type().toString().toUpperCase()/* className */)
 		//		.append(Names.MPTN_CLASS_DECL_POSTFIX)
 		//		.append("("/* begin of args */);
-		sb.append("new ").append(this.typeNode.name()).append("[] {");
+		sb.append("new ").append(this.typeNode.name()).append("[] { ");
 		w.write(sb.toString());
 		sb.setLength(0);
 

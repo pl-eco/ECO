@@ -43,9 +43,7 @@ public class EcoFieldAssign_c extends FieldAssign_c {
 			for (Field demand : MarkPass.demandFields) {
 				if (!demand.name().equals(field.name())) continue;
 				String demandAlias = ((CSObjectType) demand.target().type()).getAliasName();
-				System.out.println("field: " + field + " | demand: " + demand);
 				if (graph.checkAlias(fieldAlias, demandAlias)) {
-					System.out.println("match!");
 					calibrate = true;
 					break;
 				}
@@ -53,7 +51,7 @@ public class EcoFieldAssign_c extends FieldAssign_c {
 		}
 		
 		if (calibrate) {
-			w.write("tools.CalibratorStack.stack.peek().calibrate(");
+			w.write("tools.CalibratorStack.calibrate(");
 		}
 		super.prettyPrint(w, tr);
 		if (calibrate) {
@@ -64,8 +62,8 @@ public class EcoFieldAssign_c extends FieldAssign_c {
 	@Override
 	public Node typeCheck(TypeChecker tc) throws SemanticException {
 		if (!(left.type() instanceof PatternType) && right.type() instanceof PatternType) {
-			Expr newright = (Expr) ((etNodeFactory_c) tc.nodeFactory()).Select(right);
-			return reconstruct(left, newright).typeCheck(tc);
+			Expr newRight = (Expr) ((etNodeFactory_c) tc.nodeFactory()).Select(right);
+			return reconstruct(left, newRight).typeCheck(tc);
 		} else {
 			return super.typeCheck(tc);
 		}

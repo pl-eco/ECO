@@ -27,7 +27,7 @@ public class EcoLocalAssign_c extends LocalAssign_c {
 	@Override
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		if (calibrate) {
-			w.write("tools.CalibratorStack.stack.peek().calibrate(");
+			w.write("tools.CalibratorStack.calibrate(");
 		}
 		super.prettyPrint(w, tr);
 		if (calibrate) {
@@ -38,8 +38,8 @@ public class EcoLocalAssign_c extends LocalAssign_c {
 	@Override
 	public Node typeCheck(TypeChecker tc) throws SemanticException {
 		if (!(left.type() instanceof PatternType) && right.type() instanceof PatternType) {
-			Expr newright = (Expr) ((etNodeFactory_c) tc.nodeFactory()).Select(right);
-			return reconstruct(left, newright).typeCheck(tc);
+			Expr newRight = (Expr) ((etNodeFactory_c) tc.nodeFactory()).Select(right);
+			return reconstruct(left, newRight).typeCheck(tc);
 		} else {
 			return super.typeCheck(tc);
 		}

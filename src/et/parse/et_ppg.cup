@@ -482,7 +482,7 @@ qualified_name ::=
 				 * record the ET type values
 				 */
 				ETValueHolder vh = parser.ts.getValueHolder();
-				//vh.bindPosToModifiers(pos, c.getFlags());
+				//vh.bindPosToModifiers(pos, c.getFlags()); --Chaoren
             
             	RESULT = new JL5Name(parser.nf, parser.ts, pos, a, parser.nf.Id(parser.pos(b), b.getIdentifier())); 
                                      :};
@@ -1346,7 +1346,7 @@ class_instance_creation_expression ::=
 			 * record the ET type values
 			 */
 			ETValueHolder vh = parser.ts.getValueHolder();
-			//vh.bindPosToModifiers(parser.pos(e), k.getFlags());
+			//vh.bindPosToModifiers(parser.pos(e), k.getFlags()); --Chaoren
         
            TypeNode aa = (new JL5Name(parser.nf, parser.ts, parser.pos(e), parser.nf.Id(parser.pos(e), e.getIdentifier()))).toType();
            TypeNode tn = parser.nf.AmbTypeInstantiation(parser.pos(e, f), aa, f);

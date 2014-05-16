@@ -83,12 +83,12 @@ public class Sustainable extends Stmt_c {
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		w.begin(0);
 		w.begin(4);
-		w.write("tools.CalibratorStack.stack.push(new tools.Calibrator() {"); w.newline();
+		w.write("tools.CalibratorStack.push(new tools.Calibrator() {"); w.newline();
 		w.write("public int mode = $UTILMODES.$MAX;"); w.newline();
 		w.write("private double budget = " + supply.getNumeric() + ";"); w.newline();
 		w.write("private int bInitial = tools.BatteryInfo.getRemainingCap();"); w.newline();
 		w.begin(8);
-		w.write("public int getMode() {"); w.newline();
+		w.write("public int getMode(int max) {"); w.newline();
 		w.end();
 		w.write("return mode;"); w.newline();
 		w.write("}"); w.newline();
@@ -107,9 +107,9 @@ public class Sustainable extends Stmt_c {
 		w.write("return input;"); w.newline();
 		w.end();
 		w.write("}"); w.newline();
+		w.end();
 		w.write("});"); w.newline();
 		block.prettyPrint(w, tr); w.newline();
-		w.write("tools.CalibratorStack.stack.pop();"); w.newline();
-		w.end();
+		w.write("tools.CalibratorStack.pop();");
 	}
 }

@@ -6,6 +6,7 @@ import et.types.EnergyFlags;
 import et.types.PatternType;
 import polyglot.ast.*;
 import polyglot.ext.jl5.ast.AnnotationElem;
+import polyglot.ext.jl5.ast.JL5FieldDecl_c;
 import polyglot.ext.jl5.ast.JL5Import;
 import polyglot.ext.jl5.ast.JL5MethodDecl;
 import polyglot.ext.jl5.ast.ParamTypeNode;
@@ -20,7 +21,16 @@ import cs.ast.csNodeFactory_c;
  * NodeFactory for et extension.
  */
 public class etNodeFactory_c extends csNodeFactory_c implements etNodeFactory {
-	
+
+	@Override
+	public FieldDecl FieldDecl(Position pos, Flags flags,
+			List<AnnotationElem> annotations, TypeNode type, Id name, Expr init) {
+		FieldDecl n = new EcoFieldDecl_c(pos, flags, annotations, type, name,
+				init);
+		n = (FieldDecl) n.ext(extFactory().extFieldDecl());
+		n = (FieldDecl) n.del(delFactory().delFieldDecl());
+		return n;
+	}
 
 	@Override
     public LocalDecl LocalDecl(Position pos, Flags flags, TypeNode type,

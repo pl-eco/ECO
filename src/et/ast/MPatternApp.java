@@ -52,7 +52,7 @@ public class MPatternApp extends Expr_c {
 	public void prettyPrint(CodeWriter w, PrettyPrinter tr) {
 		// m |> pattern --> pattern.getObject(m);
 		printSubExpr(this.pattern, w, tr);
-		w.write("[$calibrator." + mode + "]");
+		w.write("[$UTILMODES." + mode + "]");
 		
 		//w.write(printMptnApp(mode));
 	}

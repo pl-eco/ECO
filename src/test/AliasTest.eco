@@ -1,0 +1,70 @@
+package src.test;
+
+modes {
+	high <: full;
+	low <: high;
+}
+
+
+class Nested {
+	public double value;
+}
+class Bar {
+	public Nested nested = new Nested();
+	public double value;
+}
+class Foo {
+	public Bar bar;
+	public Bar bar2;
+ 	mcase<int> mc = mcase<int> { low: 100; high: 10; full: 1 };
+ 	int a = mc;
+	void foo() {
+		Foo temp2 = this;
+		temp2.bar = new Bar();
+		foo3();
+		sustainable {
+			//scan, collect list of method invocations, and calibrate only if appears here
+			temp2.bar.nested.value += 1;
+			uniform {
+				foo2();
+			}
+			
+		}
+		bsupply(1)
+		//TODO: problem if 'this' appears in demand block
+		demand(temp2.bar.nested.value) -> (temp2.bar.value + temp2.bar.nested.value + 10);
+		foo3();
+	}
+	void foo2() {
+		Foo temp = this;
+		//TODO: still have problems with alias between temp and temp2
+		temp.bar = null;
+		temp.bar.value = 0;
+		temp.bar.nested = null;
+		temp.bar.nested.value = 0;
+		foo3();
+	}
+	
+	void foo3() {
+		Foo temp = this;
+		temp.bar = null;
+		temp.bar.value = 0;
+		temp.bar.nested = null;
+		temp.bar.nested.value = 0;
+	}
+}
+
+class AliasTest {
+	static void Change(Foo foo) {
+		foo.bar = null;
+	}
+	static void Change2(Foo foo) {
+		foo.bar = null;
+	}
+	public static void main(String[] args) {
+		Foo foo = new Foo();
+		foo.foo();
+		foo.foo2();
+		foo.foo3();
+	}
+}

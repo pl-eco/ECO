@@ -1,14 +1,14 @@
-package et;
+package eco;
 
 import polyglot.main.Report;
 
 /**
- * Extension information for et extension.
+ * Extension information for eco extension.
  */
 public class Topics {
-    public static final String et = "et";
+    public static final String eco = "eco";
 
     static {
-        Report.topics.add(et);
+        Report.topics.add(eco);
     }
 }

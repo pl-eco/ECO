@@ -1,26 +1,18 @@
-package et.types;
+package eco.types;
 
-import et.ast.mswitch.ECMContext_c;
-import et.linersolve.ETCplexSolver;
-import et.linersolve.ETValueHolder;
 import polyglot.ext.jl5.types.JL5ParsedClassType_c;
 import polyglot.types.*;
 import polyglot.util.Position;
 import cs.graph.CSGraph;
 import cs.graph.CSSimpleGraph;
 import cs.linearsolver.CPlexWrapper;
+import cs.types.CSContext_c;
 import cs.types.CSNonGenericType;
 import cs.types.CSNonGenericWrapper;
 import cs.types.csTypeSystem_c;
+import eco.linersolver.EcoValueHolder;
 
-public class etTypeSystem_c extends csTypeSystem_c implements etTypeSystem {
-	/*
-	 * allow "noscale" as a method modifier
-	 */
-	@Override
-	public Flags legalMethodFlags() {
-		return super.legalMethodFlags().set(ETFlags.NOSCALE);
-	}
+public class EcoTypeSystem_c extends csTypeSystem_c {
 
 	@Override
 	public LocalInstance localInstance(Position pos, Flags flags, Type type,
@@ -31,27 +23,7 @@ public class etTypeSystem_c extends csTypeSystem_c implements etTypeSystem {
 	
 	@Override
 	public Context createContext() {
-		return new ECMContext_c(this);
-	}
-
-	private Type MODE_;
-
-	public Type modeVT() {
-		if (MODE_ != null)
-			return MODE_;
-		return MODE_ = new ModeVTType_c(this);
-	}
-
-	@Override
-	public CPlexWrapper createCPlexSolver() {
-		return new ETCplexSolver(getValueHolder());
-	}
-
-	private static ETValueHolder valueHolder = new ETValueHolder();
-
-	@Override
-	public ETValueHolder getValueHolder() {
-		return valueHolder;
+		return new CSContext_c(this);
 	}
 
 	private static CSGraph graph = null;
@@ -100,5 +72,17 @@ public class etTypeSystem_c extends csTypeSystem_c implements etTypeSystem {
 					((PatternType) toType).base());
 		}
 		return super.isImplicitCastValid(fromType, toType);
+	}
+
+	@Override
+	public CPlexWrapper createCPlexSolver() {
+		return null;
+	}
+
+	private static EcoValueHolder valueHolder = new EcoValueHolder();
+
+	@Override
+	public EcoValueHolder getValueHolder() {
+		return valueHolder;
 	}
 }

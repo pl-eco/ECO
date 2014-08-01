@@ -1,4 +1,4 @@
-package et.ast;
+package eco.ast;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import et.util.Names;
+import eco.util.Names;
 import polyglot.ast.ClassBody;
 import polyglot.ast.ClassDecl_c;
 import polyglot.ast.Id;

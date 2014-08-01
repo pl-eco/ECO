@@ -1,17 +1,17 @@
-package et.visit;
+package eco.visit;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import et.ast.EcoField_c;
-import et.ast.EcoLocalDecl_c;
-import et.ast.EcoLocal_c;
-import et.ast.EcoLocalAssign_c;
-import et.ast.Sustainable;
-import et.ast.Demand;
-import et.ast.UniformStmt;
-import et.ast.EcoFieldAssign_c;
-import et.types.EcoLocalInstance_c;
+import eco.ast.Demand;
+import eco.ast.EcoFieldAssign_c;
+import eco.ast.EcoField_c;
+import eco.ast.EcoLocalAssign_c;
+import eco.ast.EcoLocalDecl_c;
+import eco.ast.EcoLocal_c;
+import eco.ast.Sustainable;
+import eco.ast.UniformStmt;
+import eco.types.EcoLocalInstance_c;
 import polyglot.ast.Assign;
 import polyglot.ast.Call;
 import polyglot.ast.Field;

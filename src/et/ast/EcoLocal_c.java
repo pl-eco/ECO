@@ -1,4 +1,4 @@
-package et.ast;
+package eco.ast;
 
 import polyglot.ast.Id;
 import polyglot.ast.Local_c;
@@ -46,12 +46,5 @@ public class EcoLocal_c extends Local_c {
 		if (calibrate) {
 			w.write("[0]");
 		}
-		/*
-		if (isShortHandForm) {
-			String mptApp = MPatternApp.printMptnApp(ECMClassDecl_c
-					.getModeFieldNameOfClass(enclosingClassName));
-			w.write(mptApp);
-		}
-		*/
 	}
 }

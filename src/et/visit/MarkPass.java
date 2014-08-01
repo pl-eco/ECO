@@ -1,14 +1,14 @@
-package et.visit;
+package eco.visit;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import et.ast.Demand;
-import et.ast.Sustainable;
-import et.ast.UniformStmt;
-import et.types.EcoLocalInstance_c;
+import eco.ast.Demand;
+import eco.ast.Sustainable;
+import eco.ast.UniformStmt;
+import eco.types.EcoLocalInstance_c;
 import polyglot.ast.Call;
 import polyglot.ast.ConstructorDecl;
 import polyglot.ast.Field;

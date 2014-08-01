@@ -1,4 +1,4 @@
-package et.parse;
+package eco.parse;
 
 import java.util.*;
 import java_cup.runtime.*;
@@ -23,24 +23,23 @@ import polyglot.types.*;
 import polyglot.lex.*;
 import polyglot.ext.jl5.parse.FlagAnnotations;
 import polyglot.ext.jl5.parse.JL5Name;
-import et.types.etTypeSystem;
-import et.ast.etNodeFactory;
+import eco.types.EcoTypeSystem_c;
+import eco.ast.EcoNodeFactory;
 import polyglot.parse.Name;
-import et.ast.*;
-import et.types.*;
-import et.util.Names;
-import et.linersolve.ETValueHolder;
+import eco.ast.*;
+import eco.types.*;
+import eco.util.Names;
 import java.util.*;
 
 parser Grm extends polyglot.ext.jl5.parse.Grm {:
 
-    public final etTypeSystem ts;
-    public final etNodeFactory nf;
+    public final EcoTypeSystem_c ts;
+    public final EcoNodeFactory nf;
 
     public Grm(Lexer l, TypeSystem t, NodeFactory n, ErrorQueue q) {
         super(l, t, n, q);
-        ts = (etTypeSystem) t;
-        nf = (etNodeFactory) n;
+        ts = (EcoTypeSystem_c) t;
+        nf = (EcoNodeFactory) n;
     }     
 
 :}
@@ -284,38 +283,18 @@ non terminal FlagAnnotations modifiers_or_annotations_opt;
 non terminal ArrayInit element_value_array_initializer;
 non terminal List element_values;
 terminal Token MODES;
-terminal Token PHASES;
 terminal Token PARORD;
-terminal Token LTP;
-terminal Token ATMODE;
-terminal Token ATPHASE;
-terminal Token ADAPT;
-terminal et.parse.ModeLiteral MODE_LITERAL;
-terminal Token MODEVT;
-terminal Token MSWITCH;
-terminal Token NOSCALE;
-terminal Token PHASESUPER;
-terminal Token ATTRIBUTE;
-terminal Token ATTRIBUTER;
-terminal Token RECONSTRUCT;
-terminal Token RECONSTRUCTOR;
-terminal Token AS;
 terminal Token MPATTERN;
-terminal Token MPAT_APP;
 terminal Token SUSTAINABLE;
 terminal Token UNIFORM;
 terminal Token BSUPPLY;
 terminal Token DEMAND;
 terminal Token ARROW;
-non terminal EnergyFlags at_opt, energies, energy;
 non terminal Adapt_c adapt_expression;
 non terminal CanonicalTypeNode mode_type;
 non terminal List modes_declarations_opt;
 non terminal List mode_body_declarations;
 non terminal List mode_body_declaration;
-non terminal List phases_declarations_opt;
-non terminal List phase_body_declarations;
-non terminal List phase_body_declaration;
 non terminal String dynamic_name;
 non terminal MPatternElement mpattern_element;
 non terminal List mpattern_elements;
@@ -365,10 +344,7 @@ literal ::=
  |  STRING_LITERAL:a {:
                      RESULT = parser.nf.StringLit(parser.pos(a), a.getValue()); 
                      :}
- |  NULL_LITERAL:a {:  RESULT = parser.nf.NullLit(parser.pos(a));  :}
- |  MODE_LITERAL:a {:
-                   RESULT = parser.nf.ModeLit(parser.pos(a), a.getValue()); 
-                   :};
+ |  NULL_LITERAL:a {:  RESULT = parser.nf.NullLit(parser.pos(a));  :};
 
 boundary_literal ::=
     INTEGER_LITERAL_BD:a {:
@@ -382,10 +358,7 @@ boundary_literal ::=
 
 type ::=
     primitive_type:a {:  RESULT = a;  :}
- |  reference_type:a {:  RESULT = a;  :}
- |  MODEVT:a {:
-             RESULT = parser.nf.CanonicalTypeNode(parser.pos(a), parser.ts.modeVT()); 
-             :};
+ |  reference_type:a {:  RESULT = a;  :};
 
 primitive_type ::=
     numeric_type:a {:  RESULT = a;  :}
@@ -460,32 +433,14 @@ name ::=
  |  qualified_name:a {:  RESULT = a;  :};
 
 simple_name ::=
-    IDENTIFIER:a at_opt:b {:
-                          
-            	Position pos = parser.pos(a);
-            	
-            	/*
-				 * record the ET type values
-				 */
-				ETValueHolder vh = parser.ts.getValueHolder();
-				//vh.bindPosToModifiers(pos, b.getFlags()); --Chaoren
-            
-            	RESULT = new JL5Name(parser.nf, parser.ts, parser.pos(a), parser.nf.Id(parser.pos(a), a.getIdentifier())); 
-                          :};
+    IDENTIFIER:a {:
+                 RESULT = new JL5Name(parser.nf, parser.ts, parser.pos(a), parser.nf.Id(parser.pos(a), a.getIdentifier())); 
+                 :};
 
 qualified_name ::=
-    name:a DOT IDENTIFIER:b at_opt:c {:
-                                     
-            	Position pos = parser.pos(a, b);
-            	
-            	/*
-				 * record the ET type values
-				 */
-				ETValueHolder vh = parser.ts.getValueHolder();
-				//vh.bindPosToModifiers(pos, c.getFlags()); --Chaoren
-            
-            	RESULT = new JL5Name(parser.nf, parser.ts, pos, a, parser.nf.Id(parser.pos(b), b.getIdentifier())); 
-                                     :};
+    name:a DOT IDENTIFIER:b {:
+                            RESULT = new JL5Name(parser.nf, parser.ts, parser.pos(a, b), a, parser.nf.Id(parser.pos(b), b.getIdentifier())); 
+                            :};
 
 compilation_unit ::=
     package_declaration_opt:a import_declarations_opt:b type_declarations_opt:c {:
@@ -560,20 +515,14 @@ type_declaration ::=
  |  SEMICOLON {:  RESULT = null;  :}
  |  enum_declaration:a {:  RESULT = a;  :}
  |  MODES LBRACE:n modes_declarations_opt:a RBRACE:b {:
-                                                     ModesDecl decl = new ModesDecl(parser.pos(n, b), Flags.NONE, parser.nf.Id(parser.pos(n), "modes"),
-            								 null, new LinkedList(), 
-            								 parser.nf.ClassBody(parser.pos(n, b), new LinkedList()));
-            	decl.setList(a);
-            	RESULT = decl;
-             
-                                                     :}
- |  PHASES LBRACE:n phases_declarations_opt:a RBRACE:b {:
-                                                       PhasesDecl decl = new PhasesDecl(parser.pos(n, b), Flags.NONE, parser.nf.Id(parser.pos(n), "phases"),
-            								 null, new LinkedList(), 
-            								 parser.nf.ClassBody(parser.pos(n, b), new LinkedList()));
-            	decl.setList(a);
-            	RESULT = decl; 
-                                                       :};
+                                                    
+		ModesDecl decl = new ModesDecl(parser.pos(n, b), Flags.NONE, parser.nf.Id(parser.pos(n), "modes"),
+				null, new LinkedList(), 
+				parser.nf.ClassBody(parser.pos(n, b), new LinkedList()));
+		decl.setList(a);
+		RESULT = decl;
+	
+                                                     :};
 
 modifier ::=
     PUBLIC:a {:  RESULT = Flags.PUBLIC;  :}
@@ -586,14 +535,13 @@ modifier ::=
  |  SYNCHRONIZED:a {:  RESULT = Flags.SYNCHRONIZED;  :}
  |  TRANSIENT:a {:  RESULT = Flags.TRANSIENT;  :}
  |  VOLATILE:a {:  RESULT = Flags.VOLATILE;  :}
- |  STRICTFP:a {:  RESULT = Flags.STRICTFP;  :}
- |  NOSCALE:a {:  RESULT = ETFlags.NOSCALE;  :};
+ |  STRICTFP:a {:  RESULT = Flags.STRICTFP;  :};
 
 class_declaration ::=
-    modifiers_or_annotations_opt:a CLASS:n IDENTIFIER:b at_opt:g type_parameters_opt:c super_opt:d interfaces_opt:e class_body:f {:
-                                                                                                                                 RESULT = parser.nf.ClassDecl(parser.pos(n, e),
-                a.flags(), a.annotations(), parser.nf.Id(parser.pos(b), b.getIdentifier()), d, e, f, c, g); 
-                                                                                                                                 :};
+    modifiers_or_annotations_opt:a CLASS:n IDENTIFIER:b type_parameters_opt:c super_opt:d interfaces_opt:e class_body:f {:
+                                                                                                                        RESULT = parser.nf.ClassDecl(parser.pos(n, e),
+                a.flags(), a.annotations(), parser.nf.Id(parser.pos(b), b.getIdentifier()), d, e, f, c); 
+                                                                                                                        :};
 
 super ::=
     EXTENDS class_type:a {:  RESULT = a;  :};
@@ -748,17 +696,7 @@ method_header ::=
                                                                                                                            :}
  |  modifiers_or_annotations_opt:a LT:b type_parameter_list_1:c VOID:d IDENTIFIER:i LPAREN formal_parameter_list_opt:e RPAREN:f dims_opt:g throws_opt:h {:
                                                                                                                                                         RESULT = parser.nf.MethodDecl(parser.pos(d, f, i), a.flags(), a.annotations(), parser.nf.CanonicalTypeNode(parser.pos(d), parser.ts.Void()), parser.nf.Id(parser.pos(i), i.getIdentifier()), e, h, null, c); 
-                                                                                                                                                        :}
- |  COMP:a RECONSTRUCTOR:b LPAREN RPAREN:d {:
-                                           
-        	
-        RESULT = parser.nf.ReconstructDecl(parser.pos(a, d), 
-        				parser.nf.MPattern(parser.pos(a), parser.nf.CanonicalTypeNode(parser.pos(a), parser.ts.Object()) /*return type*/),
-        				new Id_c(parser.pos(a, b), Names.RECONSTRUCT_METHOD_NAME)); 
-                                           :}
- |  COMP:a ATTRIBUTER:b LPAREN RPAREN:c {:
-                                        RESULT = parser.nf.AttributeDecl(parser.pos(a, c), parser.nf.CanonicalTypeNode(parser.pos(a), parser.ts.modeVT()) /*return type*/, new Id_c(parser.pos(a, b), Names.ATTRIBUTER_METHOD_NAME)); 
-                                        :};
+                                                                                                                                                        :};
 
 formal_parameter_list_opt ::=
     {:  RESULT = new LinkedList<Formal>();  :}
@@ -879,19 +817,19 @@ explicit_constructor_invocation ::=
                                                                                            :};
 
 interface_declaration ::=
-    modifiers_or_annotations_opt:a INTERFACE:b IDENTIFIER:c at_opt:g type_parameters_opt:d extends_interfaces_opt:e interface_body:f {:
-                                                                                                                                     RESULT = parser.nf.ClassDecl(parser.pos(b, f), a.setFlag(Flags.INTERFACE).flags(), a.annotations(), parser.nf.Id(parser.pos(c), c.getIdentifier()), null, e, f, d, g); 
-                                                                                                                                     :}
- |  AT:a INTERFACE:b IDENTIFIER:c at_opt:g annotation_body:d {:
-                                                             List superints = new LinkedList<TypeNode>();
+    modifiers_or_annotations_opt:a INTERFACE:b IDENTIFIER:c type_parameters_opt:d extends_interfaces_opt:e interface_body:f {:
+                                                                                                                            RESULT = parser.nf.ClassDecl(parser.pos(b, f), a.setFlag(Flags.INTERFACE).flags(), a.annotations(), parser.nf.Id(parser.pos(c), c.getIdentifier()), null, e, f, d); 
+                                                                                                                            :}
+ |  AT:a INTERFACE:b IDENTIFIER:c annotation_body:d {:
+                                                    List superints = new LinkedList<TypeNode>();
            superints.add(parser.nf.CanonicalTypeNode(parser.pos(b, d), parser.ts.Annotation()));
-           RESULT = parser.nf.ClassDecl(parser.pos(a, d), Flags.INTERFACE.set(JL5Flags.ANNOTATION), null, parser.nf.Id(parser.pos(c), c.getIdentifier()), null, superints, d, null, g); 
-                                                             :}
- |  modifiers_or_annotations:a AT:b INTERFACE:c at_opt:g IDENTIFIER:d annotation_body:e {:
-                                                                                        List superints = new LinkedList<TypeNode>();
+           RESULT = parser.nf.ClassDecl(parser.pos(a, d), Flags.INTERFACE.set(JL5Flags.ANNOTATION), null, parser.nf.Id(parser.pos(c), c.getIdentifier()), null, superints, d, null); 
+                                                    :}
+ |  modifiers_or_annotations:a AT:b INTERFACE:c IDENTIFIER:d annotation_body:e {:
+                                                                               List superints = new LinkedList<TypeNode>();
            superints.add(parser.nf.CanonicalTypeNode(parser.pos(b, e), parser.ts.Annotation()));
-           RESULT = parser.nf.ClassDecl(parser.pos(a, d), a.setFlag(Flags.INTERFACE.set(JL5Flags.ANNOTATION)).flags(), a.annotations(), parser.nf.Id(parser.pos(d), d.getIdentifier()), null, superints, e, null, g); 
-                                                                                        :};
+           RESULT = parser.nf.ClassDecl(parser.pos(a, d), a.setFlag(Flags.INTERFACE.set(JL5Flags.ANNOTATION)).flags(), a.annotations(), parser.nf.Id(parser.pos(d), d.getIdentifier()), null, superints, e, null); 
+                                                                               :};
 
 extends_interfaces_opt ::=
     {:  RESULT = new LinkedList<TypeNode>();  :}
@@ -1328,30 +1266,16 @@ class_instance_creation_expression ::=
  |  NEW:a type_arguments:b class_or_interface_type:c LPAREN:d argument_list_opt:e RPAREN:f class_body_opt:g {:
                                                                                                             RESULT = parser.nf.New(parser.pos(a), b, c, e, g); 
                                                                                                             :}
- |  primary:a DOT:b NEW:c type_arguments_opt:d IDENTIFIER:e at_opt:k type_arguments_opt:f LPAREN:g argument_list_opt:h RPAREN:i class_body_opt:j {:
-                                                                                                                                                 
-        	/*
-			 * record the ET type values
-			 */
-			ETValueHolder vh = parser.ts.getValueHolder();
-			//vh.bindPosToModifiers(parser.pos(e), k.getFlags()); --Chaoren
-        
-           TypeNode aa = (new JL5Name(parser.nf, parser.ts, parser.pos(e), parser.nf.Id(parser.pos(e), e.getIdentifier()))).toType();
+ |  primary:a DOT:b NEW:c type_arguments_opt:d IDENTIFIER:e type_arguments_opt:f LPAREN:g argument_list_opt:h RPAREN:i class_body_opt:j {:
+                                                                                                                                        TypeNode aa = (new JL5Name(parser.nf, parser.ts, parser.pos(e), parser.nf.Id(parser.pos(e), e.getIdentifier()))).toType();
            TypeNode tn = parser.nf.AmbTypeInstantiation(parser.pos(e, f), aa, f); 
            RESULT = parser.nf.New(parser.pos(a), a, d, tn, h, j); 
-                                                                                                                                                 :}
- |  name:a DOT:b NEW:c type_arguments_opt:d IDENTIFIER:e at_opt:k type_arguments_opt:f LPAREN:g argument_list_opt:h RPAREN:i class_body_opt:j {:
-                                                                                                                                              
-        	/*
-			 * record the ET type values
-			 */
-			ETValueHolder vh = parser.ts.getValueHolder();
-			//vh.bindPosToModifiers(parser.pos(e), k.getFlags()); --Chaoren
-        
-           TypeNode aa = (new JL5Name(parser.nf, parser.ts, parser.pos(e), parser.nf.Id(parser.pos(e), e.getIdentifier()))).toType();
+                                                                                                                                        :}
+ |  name:a DOT:b NEW:c type_arguments_opt:d IDENTIFIER:e type_arguments_opt:f LPAREN:g argument_list_opt:h RPAREN:i class_body_opt:j {:
+                                                                                                                                     TypeNode aa = (new JL5Name(parser.nf, parser.ts, parser.pos(e), parser.nf.Id(parser.pos(e), e.getIdentifier()))).toType();
            TypeNode tn = parser.nf.AmbTypeInstantiation(parser.pos(e, f), aa, f);
            RESULT = parser.nf.New(parser.pos(a), a.toExpr(), d, tn, h, j); 
-                                                                                                                                              :};
+                                                                                                                                     :};
 
 argument_list_opt ::=
     {:  RESULT = new LinkedList<Expr>();  :}
@@ -1649,11 +1573,7 @@ conditional_expression ::=
 assignment_expression ::=
     conditional_expression:a {:  RESULT = a;  :}
  |  assignment:a {:  RESULT = a;  :}
- |  adapt_expression:a {:  RESULT = a;  :}
- |  reconstruct_expression:a {:  RESULT = a;  :}
- |  attribute_expression:a {:  RESULT = a;  :}
- |  mpattern_init:a {:  RESULT = a;  :}
- |  mpattern_application:a {:  RESULT = a;   :};
+ |  mpattern_init:a {:  RESULT = a;  :};
 
 assignment ::=
     left_hand_side:a assignment_operator:b assignment_expression:c {:
@@ -2373,44 +2293,6 @@ element_value ::=
  |  conditional_expression:a {:  RESULT = a;  :}
  |  annotation:a {:  RESULT = a;  :};
 
-at_opt ::=
-    {:  RESULT = EnergyFlags.createDefault();  :}
- |  energies:a {:  RESULT = a;  :};
-
-energies ::=
-    energy:a {:  RESULT = a;  :}
- |  energies:a energy:b {:
-                        if (a.intersects(b)) parser.die(parser.position());
-               RESULT = a.set(b); 
-                        :};
-
-energy ::=
-    ATMODE LPAREN name:a RPAREN {:
-                                 RESULT = EnergyFlags.createEType(ETTYPE.MODE, a.toString()); 
-                                :}
- |  ATMODE LPAREN dynamic_name:a RPAREN {:
-                                       	RESULT = EnergyFlags.createEType(ETTYPE.MODE, a); 
-                                        :}
- |  ATMODE LT IDENTIFIER:a GT {:
-                               RESULT = EnergyFlags.createEType(ETTYPE.MODE, a.getIdentifier()); 
-                              :}
- |  ATPHASE LPAREN name:a RPAREN {:
-                                 
-            RESULT = EnergyFlags.createEType(ETTYPE.PHASE, a.toString()); 
-                                 :}
- |  ATPHASE LPAREN PHASESUPER:a RPAREN {:
-                                       
-            RESULT = EnergyFlags.createEType(ETTYPE.PHASE, "_super"); 
-                                       :}
- |  ATPHASE LPAREN QUESTION RPAREN {:
-                                  
-		RESULT = EnergyFlags.createEType(ETTYPE.PHASE, EnergyFlags.ANONYMOUS); 
-                                   :};
-
-dynamic_name ::=
-    QUESTION {:   RESULT = EnergyFlags.ANONYMOUS;  :}
- |  QUESTION IDENTIFIER:a {:   RESULT = a.getIdentifier();  :};
-
 sustainable_statement ::=
     SUSTAINABLE:n block:a bsupply_clause:b demand_clause:c {:
                                                            RESULT = parser.nf.Sustainable(parser.pos(n, c), a, b, c); 
@@ -2429,51 +2311,34 @@ demand_clause ::=
                                                                            RESULT = parser.nf.Demand(parser.pos(n, c), a, b); 
                                                                            :};
 
-mpattern_application ::=
-    IDENTIFIER:a MPAT_APP unary_expression_not_plus_minus:b {:
-                                                            RESULT = parser.nf.MPatternApp(parser.pos(a, b), a.getIdentifier(), b); 
-                                                            :};
-
 mpattern_init ::=
     MPATTERN LT type:a GT LBRACE mpattern_elements:b RBRACE {:
-                                                               RESULT = parser.nf.MPattern_Init(parser.pos(a, b), a, b); 
+                                                           
+		RESULT = parser.nf.MPattern_Init(parser.pos(a, b), a, b);
+	
                                                             :};
 
 mpattern_elements ::=
     mpattern_element:a {:
-                        List l = new LinkedList<MPatternElement>();
-				l.add(a);
-				RESULT = l;
-			
+                      
+		List l = new LinkedList<MPatternElement>();
+		l.add(a);
+		RESULT = l;
+	
                        :}
  |  mpattern_elements:a SEMICOLON mpattern_element:b {:
-                                                     RESULT = a;
-	        	a.add(b); 
+                                                    
+		RESULT = a;
+		a.add(b);
+	
                                                      :};
 
 mpattern_element ::=
     name:a COLON:b expression:c {:
-                                 RESULT = parser.nf.MPatternElement(parser.pos(a, c), a.toString(), c);	  	
-		   
+                               
+		RESULT = parser.nf.MPatternElement(parser.pos(a, c), a.toString(), c);	  	
+	
                                 :};
-
-adapt_expression ::=
-    ADAPT unary_expression_not_plus_minus:a {:
-                                            RESULT = parser.nf.Adapt(parser.pos(a), null, a); 
-                                            :}
- |  ADAPT:t LBRACK name:d RBRACK:b unary_expression_not_plus_minus:a {:
-                                                                     RESULT = parser.nf.Adapt(parser.pos(t, a), d.toString(), a); 
-                                                                     :};
-
-reconstruct_expression ::=
-    RECONSTRUCT unary_expression_not_plus_minus:a AS unary_expression_not_plus_minus:b {:
-                                                                                        RESULT = parser.nf.Reconstruct(parser.pos(a, b), a, b); 
-                                                                                       :};
-
-attribute_expression ::=
-    ATTRIBUTE unary_expression_not_plus_minus:a {:
-                                                RESULT = parser.nf.Attribute(parser.pos(a), a); 
-                                                :};
 
 modes_declarations_opt ::=
     {:  RESULT = new ArrayList();  :}
@@ -2482,45 +2347,26 @@ modes_declarations_opt ::=
 mode_body_declarations ::=
     mode_body_declaration:a {:  RESULT = a;  :}
  |  mode_body_declarations:a mode_body_declaration:b {:
-                                                     RESULT = a;
-			 	a.addAll(b);
-			  
+                                                    
+		RESULT = a;
+		a.addAll(b);
+	
                                                      :};
 
 mode_body_declaration ::=
     name:b SEMICOLON:c {:
-                       List l = new ArrayList();   
-            	l.add(b.toString());
-             	RESULT = l; 
+                      
+		List l = new ArrayList();   
+		l.add(b.toString());
+		RESULT = l;
+	
                        :}
  |  name:b PARORD:c name:d SEMICOLON:e {:
-                                       List l = new ArrayList();
-            	l.add(b.toString() + "<:" + d.toString());
-                RESULT = l; 
+                                      
+		List l = new ArrayList();
+		l.add(b.toString() + "<:" + d.toString());
+		RESULT = l;
+	
                                        :};
-
-phases_declarations_opt ::=
-    {:  RESULT = new ArrayList();  :}
- |  phase_body_declarations:a {:  RESULT = a;  :};
-
-phase_body_declarations ::=
-    phase_body_declaration:a {:  RESULT = a;  :}
- |  phase_body_declarations:a phase_body_declaration:b {:
-                                                       RESULT = a;
-			 	a.addAll(b);
-			  
-                                                       :};
-
-phase_body_declaration ::=
-    name:b SEMICOLON:c {:
-                       List l = new ArrayList();   
-            	l.add(b.toString());
-             	RESULT = l;  
-                       :}
- |  name:b LTP:c name:d SEMICOLON:e {:
-                                    List l = new ArrayList();
-            	l.add(b.toString() + "<cpu" + d.toString());
-                RESULT = l; 
-                                    :};
 
 

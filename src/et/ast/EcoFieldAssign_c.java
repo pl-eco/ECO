@@ -1,10 +1,10 @@
-package et.ast;
+package eco.ast;
 
 import cs.graph.CSGraph;
 import cs.types.CSObjectType;
 import cs.types.csTypeSystem_c;
-import et.types.PatternType;
-import et.visit.MarkPass;
+import eco.types.PatternType;
+import eco.visit.MarkPass;
 import polyglot.ast.Expr;
 import polyglot.ast.Field;
 import polyglot.ast.FieldAssign_c;
@@ -62,7 +62,7 @@ public class EcoFieldAssign_c extends FieldAssign_c {
 	@Override
 	public Node typeCheck(TypeChecker tc) throws SemanticException {
 		if (!(left.type() instanceof PatternType) && right.type() instanceof PatternType) {
-			Expr newRight = (Expr) ((etNodeFactory_c) tc.nodeFactory()).Select(right);
+			Expr newRight = (Expr) ((EcoNodeFactory_c) tc.nodeFactory()).Select(right);
 			return reconstruct(left, newRight).typeCheck(tc);
 		} else {
 			return super.typeCheck(tc);

@@ -1,4 +1,4 @@
-package et.ast;
+package eco.ast;
 
 import polyglot.ast.Field_c;
 import polyglot.ast.Id;

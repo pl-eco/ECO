@@ -1,4 +1,4 @@
-package et.types;
+package eco.types;
 
 import polyglot.types.Flags;
 import polyglot.types.LocalInstance_c;

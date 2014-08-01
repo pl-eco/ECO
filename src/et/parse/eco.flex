@@ -7,7 +7,7 @@
  * 
  */
 
-package et.parse;
+package eco.parse;
 
 import java_cup.runtime.Symbol;
 import polyglot.lex.Lexer;
@@ -18,7 +18,6 @@ import polyglot.util.ErrorInfo;
 import polyglot.frontend.FileSource;
 import java.util.HashMap;
 import java.math.BigInteger;
-import et.parse.ModeLiteral;
 
 @SuppressWarnings("all")
 %%
@@ -108,19 +107,8 @@ import et.parse.ModeLiteral;
         keywords.put("volatile",      new Integer(sym.VOLATILE));
         keywords.put("while",         new Integer(sym.WHILE));
         
-        /* ET project specific */
+        /* Eco project specific */
 		keywords.put("modes",		  new Integer(sym.MODES));
-		keywords.put("phases",		  new Integer(sym.PHASES));
-		keywords.put("adapt",		  new Integer(sym.ADAPT));
-  		keywords.put("modev",		  new Integer(sym.MODEVT));
-  		//keywords.put("mswitch",		  new Integer(sym.MSWITCH));
-  		keywords.put("noscale",		  new Integer(sym.NOSCALE));
-  		keywords.put("_super",		  new Integer(sym.PHASESUPER));
-  		keywords.put("reconstruct",   new Integer(sym.RECONSTRUCT));
-  		keywords.put("reconstructor",   new Integer(sym.RECONSTRUCTOR));
-  		keywords.put("attribute",      new Integer(sym.ATTRIBUTE));
-  		keywords.put("attributer",      new Integer(sym.ATTRIBUTER));
-  		keywords.put("as",      new Integer(sym.AS));
   		keywords.put("mcase",      new Integer(sym.MPATTERN));
   		keywords.put("sustainable",      new Integer(sym.SUSTAINABLE));
   		keywords.put("uniform",      new Integer(sym.UNIFORM));
@@ -259,11 +247,6 @@ import et.parse.ModeLiteral;
                                  sym.STRING_LITERAL);
     }
 
-	private Token mode_lit(String s) {
-        return new ModeLiteral(pos(), s,
-                                 sym.MODE_LITERAL);
-    }
-
     private String chop(int i, int j) {
         return yytext().substring(i,yylength()-j);
     }
@@ -309,7 +292,6 @@ DecimalNumeral = 0 | [1-9][0-9]*
 HexNumeral = 0 [xX] [0-9a-fA-F]+
 OctalNumeral = 0 [0-7]+
 
-ModeLiteral = "#" {Identifier}
 /* 3.10.2 Floating-Point Literals */
 FloatingPointLiteral = {DecimalFloatingPointLiteral} | {HexadecimalFloatingPointLiteral}
 
@@ -361,9 +343,6 @@ OctalEscape = \\ [0-7]
     {Identifier}   { Integer i = (Integer) keywords.get(yytext());
                     if (i == null) return id();
                     else return key(i.intValue()); }
-                    
-    //Add by Steve  7/4/11
-  	{ModeLiteral}   {return mode_lit(yytext()) ;} 
     
     //END
 
@@ -377,8 +356,6 @@ OctalEscape = \\ [0-7]
     ";"    { return op(sym.SEMICOLON); }
     ","    { return op(sym.COMMA);     }
     "."    { return op(sym.DOT);       }
-	"@mode"	   { return op(sym.ATMODE);		   }
-	"@phase"	   { return op(sym.ATPHASE);		   }
 	"->"   { return op(sym.ARROW); }
 
     /* 3.12 Operators */
@@ -420,10 +397,8 @@ OctalEscape = \\ [0-7]
     ">>="  { return op(sym.RSHIFTEQ);   }
     ">>>=" { return op(sym.URSHIFTEQ);  }
     "@"    { return op(sym.AT);         }
-    "..."    { return op(sym.ELLIPSIS);         }
+    "..."  { return op(sym.ELLIPSIS);   }
 	"<:"   { return op(sym.PARORD);		}
-	"<cpu"   { return op(sym.LTP);		}
-	"|>"  {return op(sym.MPAT_APP); }
 
     /* 3.10.1 Integer Literals */
     {OctalNumeral} [lL]          { return long_lit(chop(), 8); }

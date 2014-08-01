@@ -1,23 +1,14 @@
-package et.ast;
+package eco.ast;
 
 import java.util.List;
 
-import cs.types.CSNonGenericType;
-import et.ast.mswitch.MSwitchGroup;
-import et.types.PatternType;
-import et.types.etTypeSystem_c;
-import et.util.Names;
-import polyglot.ast.Expr;
+import eco.types.EcoTypeSystem_c;
 import polyglot.ast.Expr_c;
 import polyglot.ast.Node;
 import polyglot.ast.NodeFactory;
-import polyglot.ast.SwitchElement;
-import polyglot.ast.Switch_c;
 import polyglot.ast.Term;
 import polyglot.ast.TypeNode;
-import polyglot.ext.jl5.types.JL5ParsedClassType_c;
 import polyglot.types.SemanticException;
-import polyglot.types.Type;
 import polyglot.types.TypeSystem;
 import polyglot.util.CodeWriter;
 import polyglot.util.CollectionUtil;
@@ -52,7 +43,7 @@ public class MPattern_Init_c extends Expr_c {
 					position());
 		}
 	
-		return type(((etTypeSystem_c) ts).createPatternType(typeNode.type()));
+		return type(((EcoTypeSystem_c) ts).createPatternType(typeNode.type()));
 		//return type(new PatternType(typeNode.type()));
 	}
 
@@ -124,6 +115,6 @@ public class MPattern_Init_c extends Expr_c {
 
 	@Override
 	public Node copy(NodeFactory nf) {
-		return ((etNodeFactory) nf).MPattern_Init(this.position, this.typeNode, this.list);
+		return ((EcoNodeFactory) nf).MPattern_Init(this.position, this.typeNode, this.list);
 	}
 }

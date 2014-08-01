@@ -1,4 +1,4 @@
-package et.ast;
+package eco.ast;
 
 import java.util.List;
 import polyglot.ast.Block;

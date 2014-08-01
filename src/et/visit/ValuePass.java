@@ -1,4 +1,4 @@
-package et.visit;
+package eco.visit;
 
 import polyglot.ast.Node;
 import polyglot.ast.NodeFactory;

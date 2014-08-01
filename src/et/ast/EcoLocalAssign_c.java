@@ -1,6 +1,6 @@
-package et.ast;
+package eco.ast;
 
-import et.types.PatternType;
+import eco.types.PatternType;
 import polyglot.ast.Expr;
 import polyglot.ast.Local;
 import polyglot.ast.LocalAssign_c;
@@ -38,7 +38,7 @@ public class EcoLocalAssign_c extends LocalAssign_c {
 	@Override
 	public Node typeCheck(TypeChecker tc) throws SemanticException {
 		if (!(left.type() instanceof PatternType) && right.type() instanceof PatternType) {
-			Expr newRight = (Expr) ((etNodeFactory_c) tc.nodeFactory()).Select(right);
+			Expr newRight = (Expr) ((EcoNodeFactory_c) tc.nodeFactory()).Select(right);
 			return reconstruct(left, newRight).typeCheck(tc);
 		} else {
 			return super.typeCheck(tc);

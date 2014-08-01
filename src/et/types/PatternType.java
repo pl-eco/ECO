@@ -1,4 +1,4 @@
-package et.types;
+package eco.types;
 
 import java.util.LinkedList;
 import java.util.List;

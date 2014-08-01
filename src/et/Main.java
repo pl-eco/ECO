@@ -1,4 +1,4 @@
-package et;
+package eco;
 
 /**
  * Main is the main program of the compiler extension.
@@ -11,7 +11,7 @@ public class Main
       polyglot.main.Main polyglotMain = new polyglot.main.Main();
 
       try {    
-          polyglotMain.start(args, new et.ExtensionInfo());
+          polyglotMain.start(args, new eco.ExtensionInfo());
       }
       catch (polyglot.main.Main.TerminationException e) {
           System.err.println(e.getMessage());

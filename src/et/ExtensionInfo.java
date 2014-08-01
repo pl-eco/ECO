@@ -1,15 +1,14 @@
-package et;
+package eco;
 
-import et.ExtensionInfo;
-import et.ast.*;
-import et.parse.Grm;
-import et.parse.Lexer_c;
-import et.types.*;
-import et.visit.MarkPass;
-import et.visit.CalibratePass;
-//import et.visit.CT2OTPropPass;
-import et.visit.ET1stPass;
-import et.visit.ET2ndPass;
+import eco.ExtensionInfo;
+import eco.ast.*;
+import eco.parse.Grm;
+import eco.parse.Lexer_c;
+import eco.types.*;
+import eco.visit.CalibratePass;
+import eco.visit.Eco1stPass;
+import eco.visit.Eco2ndPass;
+import eco.visit.MarkPass;
 import polyglot.ast.*;
 import polyglot.types.*;
 import polyglot.util.*;
@@ -28,7 +27,7 @@ import cs.visit.CS1stPass;
 import cs.visit.CS2ndPass;
 
 /**
- * Extension information for et extension.
+ * Extension information for eco extension.
  */
 public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 	public static final Object totalTime = new Object();
@@ -40,19 +39,19 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 	}
 
 	public String defaultFileExtension() {
-		return "et";
+		return "eco";
 	}
 
 	public String compilerName() {
-		return "etc";
+		return "ecoc";
 	}
 
 	protected NodeFactory createNodeFactory() {
-		return new etNodeFactory_c();
+		return new EcoNodeFactory_c();
 	}
 
 	protected TypeSystem createTypeSystem() {
-		return new etTypeSystem_c();
+		return new EcoTypeSystem_c();
 	}
 
 	// Add by Steve 6/9/11
@@ -133,7 +132,7 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 			TypeSystem ts = job.extensionInfo().typeSystem();
 			NodeFactory nf = job.extensionInfo().nodeFactory();
 
-			Goal g = internGoal(new VisitorGoal(job, new ET1stPass(job, ts, nf)) {
+			Goal g = internGoal(new VisitorGoal(job, new Eco1stPass(job, ts, nf)) {
 				public Collection<Goal> prerequisiteGoals(Scheduler scheduler) {
 					List<Goal> l = new ArrayList<Goal>();
 					l.addAll(super.prerequisiteGoals(scheduler));
@@ -158,7 +157,7 @@ public class ExtensionInfo extends polyglot.ext.jl5.ExtensionInfo {
 			TypeSystem ts = job.extensionInfo().typeSystem();
 			NodeFactory nf = job.extensionInfo().nodeFactory();
 
-			Goal g = internGoal(new VisitorGoal(job, new ET2ndPass(job, ts, nf)) {
+			Goal g = internGoal(new VisitorGoal(job, new Eco2ndPass(job, ts, nf)) {
 				public Collection<Goal> prerequisiteGoals(Scheduler scheduler) {
 					List<Goal> l = new ArrayList<Goal>();
 					// l.addAll(super.prerequisiteGoals(scheduler));

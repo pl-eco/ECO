@@ -1,10 +1,8 @@
-package et.util;
+package eco.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import et.ast.PhasesDecl;
 
 public class PropertyLoader {
 	public static String mainClass;
@@ -52,9 +50,6 @@ public class PropertyLoader {
 		try {
 			is = new FileInputStream("ecm.prop");
 			prop.load(is);
-
-			PhasesDecl.minScale = Integer.parseInt(prop.getProperty("minScale").trim());
-			PhasesDecl.maxScale = Integer.parseInt(prop.getProperty("maxScale").trim());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

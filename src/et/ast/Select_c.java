@@ -1,4 +1,4 @@
-package et.ast;
+package eco.ast;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ import polyglot.visit.NodeVisitor;
 import polyglot.visit.PrettyPrinter;
 import polyglot.visit.TypeChecker;
 import cs.types.CSNonGenericType;
-import et.types.PatternType;
-import et.types.etTypeSystem_c;
+import eco.types.PatternType;
+import eco.types.EcoTypeSystem_c;
 
 public class Select_c extends Expr_c {
 

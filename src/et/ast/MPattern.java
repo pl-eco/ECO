@@ -1,4 +1,4 @@
-package et.ast;
+package eco.ast;
 
 /*
  * This is a type node representing the mpattern type
@@ -7,9 +7,9 @@ package et.ast;
 import cs.ast.CSCanonicalTypeNode_c;
 import cs.types.CSNonGenericType;
 import cs.types.csTypeSystem_c;
-import et.types.PatternType;
-import et.types.etTypeSystem_c;
-import et.util.Names;
+import eco.types.PatternType;
+import eco.types.EcoTypeSystem_c;
+import eco.util.Names;
 import polyglot.ast.Ambiguous;
 import polyglot.ast.CanonicalTypeNode_c;
 import polyglot.ast.Node;
@@ -63,7 +63,7 @@ public class MPattern extends TypeNode_c {
 		//Type type = ((etTypeSystem_c) tb.typeSystem()).createDefaultObjectType(
 		//		tb.typeSystem().unknownType(node.position()), "mpattern");
 		//		tb.typeSystem().unknownType(node.position()), "default");
-		Type t = ((etTypeSystem_c) tb.typeSystem()).createPatternType(
+		Type t = ((EcoTypeSystem_c) tb.typeSystem()).createPatternType(
 				tb.typeSystem().unknownType(node.position()));
 		//return node.type(type);
 		//return node.type(tb.typeSystem().unknownType(node.position()));

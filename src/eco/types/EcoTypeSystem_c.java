@@ -10,7 +10,7 @@ import cs.types.CSContext_c;
 import cs.types.CSNonGenericType;
 import cs.types.CSNonGenericWrapper;
 import cs.types.csTypeSystem_c;
-import eco.linersolver.EcoValueHolder;
+import eco.linearsolver.EcoValueHolder;
 
 public class EcoTypeSystem_c extends csTypeSystem_c {
 

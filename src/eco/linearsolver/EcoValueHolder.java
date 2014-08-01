@@ -1,4 +1,4 @@
-package eco.linersolver;
+package eco.linearsolver;
 
 import cs.graph.GraphElement;
 import cs.linearsolver.ValueHolder;

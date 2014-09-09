@@ -11,3 +11,6 @@ A sustainable program adaptively adjusts its own behaviors to stay on a given en
  and demand. Concretely, Eco introduces a novel language abstraction-sustainable blocks-to achieve fine-grained programmable 
  sustainability. Eco is implemented as a minimal extension to Java, and we validate its design by upgrading real-world Java
   programs, enabling two crucial features toward energy-aware software: battery awareness and temperature awareness.
+
+
+Tech report can be found at https://github.com/pl-eco/ECO/blob/master/TechReport.pdf

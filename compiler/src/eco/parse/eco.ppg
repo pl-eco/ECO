@@ -1,0 +1,221 @@
+// Assumes polyglot.jar is in classpath
+include "polyglot/ext/jl7/parse/jl7.ppg"
+
+package eco.parse;
+
+import eco.ast.*;
+import eco.types.*;
+import eco.util.Names;
+
+import polyglot.util.*;
+import polyglot.parse.Name;
+import polyglot.parse.VarDeclarator;
+import polyglot.ast.*;
+import polyglot.types.*;
+import polyglot.lex.*;
+
+import polyglot.ext.jl5.ast.*;
+import polyglot.ext.jl5.types.*;
+
+import polyglot.ext.jl7.ast.*;
+import polyglot.ext.jl7.types.*; 
+
+import java.util.*;
+
+parser Grm extends polyglot.ext.jl7.parse.Grm {:
+    public final EcoTypeSystem ts;
+    public final EcoNodeFactory nf;
+
+    public Grm(Lexer l, TypeSystem t, NodeFactory n, ErrorQueue q) {
+        super(l, t, n, q);
+        ts = (EcoTypeSystem) t;
+        nf = (EcoNodeFactory) n;
+    }     
+:};
+
+/* eco related syntax */
+terminal Token MODES; //MODE refers to mode
+terminal Token PARORD;
+terminal Token MPATTERN;
+terminal Token SUSTAINABLE;
+terminal Token UNIFORM;
+terminal Token BSUPPLY;
+terminal Token TSUPPLY;
+terminal Token DEMAND;
+terminal Token ARROW;
+terminal Token BATTERY;
+terminal Token TEMPERATURE;
+
+non terminal List modes_declarations_opt;
+non terminal List mode_body_declarations;
+non terminal List mode_body_declaration;
+
+/* DYNAMIC RELATED SYNTAX */
+non terminal String dynamic_name;
+non terminal MPatternElement mpattern_element;
+non terminal List mpattern_elements;
+non terminal MPatternInit mpattern_init;
+
+/* eco syntax */
+non terminal Stmt sustainable_statement;
+
+non terminal Demand demand_clause;
+non terminal UniformStmt uniform_statement;
+
+non terminal Supply supply_clause;
+non terminal BSupply bsupply_clause;
+non terminal TSupply tsupply_clause;
+
+non terminal Expr battery;
+non terminal Expr temperature;
+
+start with goal;
+
+extend class_or_interface_type ::=
+	MPATTERN LT type:a GT
+	{: RESULT = parser.nf.MPattern(parser.pos(a), a); :}
+;
+
+extend statement_without_trailing_substatement ::=
+	sustainable_statement:a
+	{: RESULT = a; :}
+|	uniform_statement:a
+	{: RESULT = a; :}
+;
+
+sustainable_statement ::=
+	SUSTAINABLE:n block:a supply_clause:b demand_clause:c
+	{: RESULT = parser.nf.Sustainable(parser.pos(n, c), a, b, c); :}
+;
+
+uniform_statement ::=
+	UNIFORM:n block:a
+	{: RESULT = parser.nf.UniformStmt(parser.pos(n, a), a); :}
+;
+
+supply_clause ::=
+  bsupply_clause:a
+  {: RESULT = a; :}
+| tsupply_clause:a
+  {: RESULT = a; :}
+;
+
+bsupply_clause ::=
+	BSUPPLY:b LPAREN expression:e RPAREN:r
+	{: RESULT = parser.nf.BSupply(parser.pos(b,r), e); :}
+;
+
+tsupply_clause ::=
+	TSUPPLY:t LPAREN expression:e RPAREN:r
+	{: RESULT = parser.nf.TSupply(parser.pos(t,r), e); :}
+;
+	
+extend primary_no_new_array ::=
+	battery:b
+	{: RESULT = b; :} 
+|	temperature:t
+	{: RESULT = t; :}
+;
+
+battery ::=
+	BATTERY:b
+	{: RESULT = parser.nf.BatterySupplyExpr(parser.pos(b)); :}
+;
+
+temperature ::=
+	TEMPERATURE:t
+	{: RESULT = parser.nf.TemperatureSupplyExpr(parser.pos(t)); :}
+;
+
+/*
+ * TODO:
+ * demand_expression ::=
+ * 		same as expression, except each identifier comes with optional {N}
+ * 
+ */
+	
+demand_clause ::=
+	DEMAND:n LPAREN expression:a RPAREN ARROW LPAREN expression:b RPAREN:c 
+	{: RESULT = parser.nf.Demand(parser.pos(n, c), a, b); :}
+;
+
+//Pattern_Init_c
+mpattern_init ::= 
+	MPATTERN LT type:a GT LBRACE mpattern_elements:b RBRACE
+	{:
+		RESULT = parser.nf.MPatternInit(parser.pos(a, b), a, b);
+	:}
+;
+
+//List
+mpattern_elements ::= 
+	mpattern_element:a
+	{:
+		List l = new LinkedList<MPatternElement>();
+		l.add(a);
+		RESULT = l;
+	:}
+|	mpattern_elements:a SEMICOLON mpattern_element:b
+	{:
+		RESULT = a;
+		a.add(b);
+	:}
+;
+
+//MPatternElement
+mpattern_element ::=
+	name:a COLON:b expression:c
+	{:
+		RESULT = parser.nf.MPatternElement(parser.pos(a, c), a.toString(), c);	  	
+	:}
+;
+
+extend assignment_expression ::=
+	mpattern_init:a
+	{: RESULT = a; :}
+;
+
+// Mode declare
+extend type_declaration ::=
+	// ClassDecl
+	MODES LBRACE:n modes_declarations_opt:a RBRACE:b 
+	{:
+		ModesDecl decl = parser.nf.ModesDecl(parser.pos(n, b), Flags.NONE, parser.nf.Id(parser.pos(n), "modes"),
+				null, new LinkedList(), 
+				parser.nf.ClassBody(parser.pos(n, b), new LinkedList()));
+		decl.setList(a);
+		RESULT = decl;
+	:}   
+; 
+
+modes_declarations_opt ::= 
+	// List of Mode
+ 	{: RESULT = new ArrayList(); :}
+|   mode_body_declarations:a
+	{: RESULT = a; :}
+;
+
+mode_body_declarations ::= 
+	mode_body_declaration:a
+	{: RESULT = a; :}
+|	mode_body_declarations:a mode_body_declaration:b
+	{:
+		RESULT = a;
+		a.addAll(b);
+	:}
+;
+
+mode_body_declaration ::=
+	name:b SEMICOLON:c
+	{:
+		List l = new ArrayList();   
+		l.add(b.toString());
+		RESULT = l;
+	:}
+|	name:b PARORD:c name:d SEMICOLON:e
+	{:
+		List l = new ArrayList();
+		l.add(b.toString() + "<:" + d.toString());
+		RESULT = l;
+	:}
+;

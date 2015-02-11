@@ -1,0 +1,17 @@
+public class ClassWithAlternatueRecursiveMethods {
+  ClassWithAlternatueRecursiveMethods() { 
+      fooA = 10;
+  }
+
+  public int fooA;
+
+  public void methodA(int x) {
+    if (x > 0) {
+      methodB(x-1);
+    }
+  }
+
+  public void methodB(int x) {
+    methodA(x);
+  }
+}

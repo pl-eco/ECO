@@ -1,0 +1,18 @@
+modes { low <: mid; mid <: high; }
+
+public class Test {
+
+  public static void main(String[] args) {
+
+    int x;
+    sustainable {
+      for(x = 0; x < 100; x += 1) {
+        System.out.println(x); 
+      }
+    }
+    bsupply(battery*0.60)
+    demand(100) -> (100 - x);
+
+  }
+
+}

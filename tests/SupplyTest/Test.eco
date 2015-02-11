@@ -1,0 +1,11 @@
+modes { low <: mid; mid <: high; }
+
+public class Test {
+  public static void main(String[] args) {
+    sustainable {
+    }
+    tsupply(0)
+    demand(0) -> (0);
+
+  }
+}

@@ -1,0 +1,51 @@
+<?xml version = "1.0" encoding="UTF-8"?>
+<root>
+  <!-- How to handle the two options with long format?  -->
+  <!--
+  <option name="help" pattern=""/>
+  <option name="version" pattern=""/>
+  -->
+
+  <option name="addbootcp" pattern="addbootcp\s.*"/>
+  <option name="assert" pattern="assert"/>
+  <option name="bootclasspath" pattern="bootclasspath\s.*"/>
+  <option name="c" pattern="c"/>
+  <option name="cp" pattern="cp\s.*"/>
+  <option name="classpath" pattern="classpath\s.*"/>
+  <option name="D" pattern="D\s.*"/>
+  <option name="d" pattern="d\s.*"/>
+  <option name="debugpositions" pattern="debugpositions"/>
+  <option name="disable" pattern="disable\s.*"/>
+  <option name="dump" pattern="dump\s.*"/>
+  <option name="enumImplClass" pattern="enumImplClass\s.*"/>
+  <option name="enumSetImplClass" pattern="enumSetImplClass\s.*"/>
+  <option name="errors" pattern="errors\s.*"/>
+  <option name="fqcn" pattern="fqcn"/>
+  <option name="g" pattern="g"/>
+  <option name="mergestrings" pattern="mergestrings"/>
+  <option name="morepermissivecasts" pattern="morepermissivecasts"/>
+  <option name="morepermissiveinference" pattern="morepermissiveinference"/>
+  <option name="no-output-to-fs" pattern="no-output-to-fs"/>
+  <option name="nooutput" pattern="nooutput"/>
+  <option name="noserial" pattern="noserial"/>
+  <option name="ox" pattern="ox\s.*"/>
+  <option name="postcompiler" pattern="postcompiler\s.*"/>
+
+  <!-- This is the special one, that we need to take java options and
+       add to. -->
+  <!-- <option name="postopts" pattern="postopts.*"/> -->
+
+  <option name="preferclassfiles" pattern="preferclassfiles"/>
+  <option name="print" pattern="print\s.*"/>
+  <option name="removeJava5isms" pattern="removeJava5isms"/>
+
+  <option name="report" pattern="report.*=.*"/>
+  <option name="simpleoutput" pattern="simpleoutput"/>
+  <option name="sourcepath" pattern="sourcepath\s.*"/>
+  <option name="stdout" pattern="stdout"/>
+  <option name="sx" pattern="sx\s.*"/>
+  <option name="v" pattern="v"/>
+  <option name="w" pattern="w\s.*"/> 
+
+</root>
+

@@ -1,0 +1,48 @@
+<?xml version = "1.0" encoding="UTF-8"?>
+<root>
+  <option name="cp" pattern="cp\s.*"/>
+  <option name="classpath" pattern="classpath\s.*"/>
+  <option name="Djava.ext.dirs" pattern="Djava\.ext\.dirs=.*"/>
+  <option name="Djava.endorsed.dirs" pattern="Djava\.endorsed\.dirs=.*"/>
+  <option name="d" pattern="d\s.*"/>
+  <option name="deprecation" pattern="deprecation"/>
+  <option name="encoding" pattern="encoding\s.*"/>
+  <option name="endorseddirs" pattern="endorseddirs\s.*"/>
+  <option name="g" pattern="g"/>
+  <option name="gjava" pattern="g:.*"/>
+  <option name="help" pattern="help"/>
+  <option name="implicit" pattern="implicit:.*"/>
+  <!-- <option name="Joption" pattern="J.*"/> -->
+  <option name="nowarn" pattern="nowarn"/>
+  <option name="proc" pattern="proc:(none|only)"/>
+  <option name="processor" pattern="processor\s.*"/>
+  <option name="processorpath" pattern="processorpath\s.*"/>
+  <option name="s" pattern="s\s.*"/>
+  <option name="source" pattern="source\s.*"/>
+  <option name="sourcepath" pattern="sourcepath\s.*"/>
+  <option name="verbose" pattern="verbose"/>
+  <option name="Werror" pattern="Werror"/>
+  <option name="X" pattern="X"/>
+
+  <!-- Cross compilation options -->
+
+  <option name="target" pattern="target\s.*"/>
+  <option name="bootclasspath" pattern="bootclasspath\s.*"/>
+
+  <!-- Non standard options -->
+
+  <option name="Xbootclasspath/p" pattern="Xbootclasspath/p:.*"/>
+  <option name="Xbootclasspath/a" pattern="Xbootclasspath/a:.*"/>
+  <option name="Xbootclasspath/" pattern=":Xbootclasspath/:.*"/>
+
+  <option name="Xlint" pattern="Xlint"/>
+  <option name="XlintMore" pattern="Xlint:.*"/>
+  <option name="Xmaxerrs" pattern="Xmaxerrs\s.*"/>
+  <option name="Xmaxwarns" pattern="Xmaxwarns\s.*"/>
+  <option name="Xstdout" pattern="Xstdout\s.*"/>
+  <option name="Xprefer" pattern="Xprefer:.*"/>
+  <option name="Xpkginfo" pattern="Xpkginfo:.*"/>
+  <option name="Xprint" pattern="Xprint"/>
+  <option name="XprintProcessorInfo" pattern="XprintProcessorInfo"/>
+  <option name="XprintRounds" pattern="XprintRounds"/>
+</root>

@@ -1,0 +1,42 @@
+modes { low <: mid; mid <: high; }
+
+public class Test {
+
+  public static void foo(int bar) {
+    System.out.println(bar);
+  }
+
+  public static void main(String[] args) {
+
+    mcase<int> intCase = mcase<int> {
+      low : 0;
+      mid : 1;
+      high : 2
+    };
+
+    int x = 5;
+    int y = 2;
+
+    if (intCase >= x) {
+      System.out.println("less");
+    }
+
+    /*
+    int x;
+    uniform {
+      for(x = 0; x < 100; ++x) {
+
+        // Check for compile
+        //int currentCase = intCase;
+
+        //foo(intCase);
+      
+      }
+    }
+    //bsupply(battery*0.60)
+    //demand(100) -> (100 - x);
+    */
+
+  }
+
+}

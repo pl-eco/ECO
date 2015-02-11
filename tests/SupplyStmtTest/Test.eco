@@ -1,0 +1,166 @@
+modes { low <: mid; mid <: high; }
+
+public class Test {
+  public static void main(String[] args) {
+    int x;
+
+    // Test 1: Standard numerical expressions compile 
+    // Test 1: Battery 
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(battery*0.60)
+    demand(100) -> (100 - x);
+     
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(battery/0.60)
+    demand(100) -> (100 - x);
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(battery)
+    demand(100) -> (100 - x);
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(20000)
+    demand(100) -> (100 - x);
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(battery * 1000)
+    demand(100) -> (100 - x);
+
+
+
+    // Test 1: Standard numerical expressions compile 
+    // Test 1: Temperature 
+
+    
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    tsupply(temperature*0.60)
+    demand(100) -> (100 - x);
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    tsupply(temperature)
+    demand(100) -> (100 - x);
+
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    tsupply(20000)
+    demand(100) -> (100 - x);
+
+
+    // Test 2: Standard expressions compile 
+    // Test 2: Battery 
+
+    final double aPossibleBatteryRatio = 0.70;
+    final int aPossibleBatteryLimit = 200000;
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(temperature*aPossibleBatteryRatio)
+    demand(100) -> (100 - x);
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(aPossibleBatteryLimit)
+    demand(100) -> (100 - x);
+
+    // Test 2: Standard expressions compile 
+    // Test 2: Temperature 
+
+    final double aPossibleTemperatureRatio = 0.70;
+    final int aPossibleTemperatureLimit = 200000;
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    tsupply(temperature*aPossibleTemperatureRatio)
+    demand(100) -> (100 - x);
+
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    tsupply(aPossibleTemperatureRatio)
+    demand(100) -> (100 - x);
+
+    // Test 3: Complicated expressions compile 
+    // Test 3: Battery 
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(battery*(aPossibleBatteryRatio+0.20))
+    demand(100) -> (100 - x);
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    bsupply(aPossibleBatteryLimit+(1000*0.20))
+    demand(100) -> (100 - x);
+
+    // Test 3: Complicated expressions compile 
+    // Test 3: Temperature 
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    tsupply(temperature*(aPossibleTemperatureRatio+0.20))
+    demand(100) -> (100 - x);
+
+    sustainable {
+      for(x = 0; x < 100; ++x) {
+        System.out.println("Sustainable");
+      }
+    }
+    tsupply(aPossibleTemperatureLimit+(1000*0.20))
+    demand(100) -> (100 - x);
+
+  }
+}

@@ -1,0 +1,8 @@
+public class Child extends Parent {
+  public Child() { }
+
+  @Override
+  public void foo() { 
+  }
+
+}

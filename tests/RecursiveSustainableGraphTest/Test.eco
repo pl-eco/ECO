@@ -1,0 +1,38 @@
+modes { low <: mid; mid <: high; }
+
+class Test {
+  public static void main(String[] args) {
+    mcase<int> fooCase = mcase<int> {
+      low : 10;
+      mid : 20;
+      high : 30
+    };
+
+    int fullBar = 100;
+    int bar = 0;
+
+    // Try A calls A case
+    ClassWithRecursiveMethods recursiveMethods = new ClassWithRecursiveMethods();
+
+    sustainable {
+      for (bar = 0; bar < fullBar; ++bar) {
+        recursiveMethods.methodB(bar);
+      }
+    }
+    bsupply (0.2)
+    demand (bar) -> (fullBar - bar);
+
+    // Try A calls B, B calls A case
+    ClassWithAlternatueRecursiveMethods alternateRecursiveMethods = new ClassWithAlternatueRecursiveMethods();
+
+    sustainable {
+      for (bar = 0; bar < fullBar; ++bar) {
+        alternateRecursiveMethods.methodB(bar);
+      }
+    }
+    bsupply (0.2)
+    demand (bar) -> (fullBar - bar);
+
+
+  }
+}

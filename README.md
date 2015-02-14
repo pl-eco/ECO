@@ -43,3 +43,7 @@ A compiled ecoc program can be invoked using the eco script found in /bin. This 
 ```
 eco -cp /path_to_classes Hello
 ```
+
+Tech Report
+===
+Tech report can be found [here](https://github.com/pl-eco/ECO/blob/master/tech.pdf)

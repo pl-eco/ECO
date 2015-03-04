@@ -48,8 +48,10 @@ Samples
 ===
 /samples contains full programs that compile and run with eco. Currently, a modified sunflow is available for use. The following sequence of commands will build and run the sunflow benchmark that demonstrates the sustainable programming model of eco.
 
-```ant compile```
-```eco -cp build/classes:janino.jar SunflowGUI -rtbench```
+```
+ant compile;
+eco -cp build/classes:janino.jar SunflowGUI -rtbench
+```
 
 See RealtimeBenchmark.java (src/org/sunflow/RealtimeBenchmark.java) for the main sustainable loop. This can be modified test various supplies (both battery and temperature).
 

@@ -31,12 +31,13 @@
 	</target>
 
 
+      <!-- executable="/Users/acanino/Research/polyglot-2.6.1-src/src/polyglot/ext/eco/bin/ecoc" -->
 	<!-- build directory targets -->
 	<target name="compile" depends="init" description="Compile source">
 		<mkdir dir="${build.classes.dir}" />
     <javac 
       fork="yes"
-      executable="/Users/acanino/Research/polyglot-2.6.1-src/src/polyglot/ext/eco/bin/ecoc"
+      executable="ecoc"
       srcdir="${src.dir}" 
       destdir="${build.classes.dir}" 
       source="${sunflow.jdk.level}" 

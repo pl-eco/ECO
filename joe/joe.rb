@@ -1,4 +1,4 @@
-#!/Users/acanino/.rvm/rubies/ruby-2.1.2/bin/ruby
+#!/usr/local/bin/ruby
 
 require 'optparse'
 require "nokogiri"

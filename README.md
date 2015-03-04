@@ -44,6 +44,35 @@ A compiled ecoc program can be invoked using the eco script found in /bin. This 
 eco -cp /path_to_classes Hello
 ```
 
+Samples
+===
+/samples contains full programs that compile and run with eco. Currently, a modified sunflow is available for use. The following sequence of commands will build and run the sunflow benchmark that demonstrates the sustainable programming model of eco.
+
+```ant compile```
+```eco -cp build/classes:janino.jar SunflowGUI -rtbench```
+
+See RealtimeBenchmark.java (src/org/sunflow/RealtimeBenchmark.java) for the main sustainable loop. This can be modified test various supplies (both battery and temperature).
+
+```
+sustainable {
+  while (phi < totalPhi) {
+
+  eye.x = 30 * (float) Math.cos(phi);
+  eye.y = 30 * (float) Math.sin(phi);
+  phi += Math.PI / 30; 
+  frames++;
+  // update camera
+  parameter("eye", eye);
+  parameter("target", target);
+  parameter("up", up);
+  camera(name, null);
+  render(SunflowAPI.DEFAULT_OPTIONS, display);
+  }   
+}   
+bsupply(battery * 0.1)
+demand(totalPhi) -> (totalPhi - phi);
+```
+
 Tech Report
 ===
 Tech report can be found [here](https://github.com/pl-eco/ECO/blob/master/tech.pdf)

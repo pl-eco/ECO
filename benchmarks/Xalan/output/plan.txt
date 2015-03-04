@@ -1,4 +1,0 @@
-baseline: 5990 mwh
-90%: 5300 mwh
-70%: 4200 mwh
-50%: 3000 mwh
